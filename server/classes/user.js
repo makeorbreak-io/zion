@@ -15,7 +15,7 @@ class User {
         var u = new User(0, token, refreshToken, 0);
         u.scode = User.generateCode();
         //insert into db
-        u.port = User.getNextPort(function(port) {
+        User.getNextPort(function(port) {
             u.port = port;
             dbcon.query('INSERT INTO users SET ?', { token: u.token, refreshToken: u.refreshToken, port: u.port, scode: u.scode }, function(err, result) {
                 if (err) throw err;
