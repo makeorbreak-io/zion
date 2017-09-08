@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 08, 2017 at 11:31 PM
+-- Generation Time: Sep 09, 2017 at 12:58 AM
 -- Server version: 10.1.21-MariaDB
 -- PHP Version: 7.1.1
 
@@ -44,7 +44,7 @@ CREATE TABLE `bids` (
 CREATE TABLE `codes` (
   `codeId` int(6) NOT NULL,
   `code` varchar(20) NOT NULL,
-  `user_id` int(6) NOT NULL
+  `userId` int(6) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -89,7 +89,7 @@ ALTER TABLE `bids`
 --
 ALTER TABLE `codes`
   ADD PRIMARY KEY (`codeId`),
-  ADD KEY `user_id` (`user_id`),
+  ADD KEY `user_id` (`userId`),
   ADD KEY `code` (`code`);
 
 --
@@ -112,7 +112,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `bids`
 --
 ALTER TABLE `bids`
-  MODIFY `bidId` int(6) NOT NULL AUTO_INCREMENT;
+  MODIFY `bidId` int(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 --
 -- AUTO_INCREMENT for table `codes`
 --
