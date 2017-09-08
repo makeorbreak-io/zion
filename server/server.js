@@ -4,7 +4,12 @@ const querystring = require('querystring');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 
+const Wrapper = require('./wrapper.js');
+
 const router = express.Router();
+
+const CLIENT_ID = "ef3393f29a2d47eaa662d0e913abcef5";
+const CLIENT_SECRET = "05438ca3a01845f59ce0f3bafdfd1f48";
 
 const app = express();
 
@@ -36,7 +41,54 @@ router.route('/callback')
 
     let code = req.query.code;
 
+    request.get({'url': "http://ipecho.net/plain"}, function(error, response, body){
+      console.log(response);
+    });
+
     //TODO: Get tokens from spotify api
+    /*var authOptions = {
+      url: 'https://accounts.spotify.com/api/token',
+      form: {
+        code: code,
+        redirect_uri: redirect_uri,
+        grant_type: 'authorization_code'
+      },
+      headers: {
+        'Authorization': 'Basic ' + (new Buffer(client_id + ':' + client_secret).toString('base64'))
+      },
+      json: true
+    };
+
+    request.post(authOptions, function(error, response, body) {
+      if (!error && response.statusCode === 200) {
+
+        var access_token = body.access_token,
+            refresh_token = body.refresh_token;
+
+        var options = {
+          url: 'https://api.spotify.com/v1/me',
+          headers: { 'Authorization': 'Bearer ' + access_token },
+          json: true
+        };
+
+        // use the access token to access the Spotify Web API
+        request.get(options, function(error, response, body) {
+          console.log(body);
+        });
+
+        // we can also pass the token to the browser to make requests from there
+        res.redirect('/#' +
+          querystring.stringify({
+            access_token: access_token,
+            refresh_token: refresh_token
+          }));
+      } else {
+        res.redirect('/#' +
+          querystring.stringify({
+            error: 'invalid_token'
+          }));
+      }
+    });*/
 
   });
 
@@ -47,14 +99,19 @@ router.route('/validatesession')
       res.json({'error': 'No code in request body'});
     }
 
-    //console.log(req.body);
-
     let code = req.body.code;
 
-    //TODO: Validate in DB
+    let sessionId;
+
+    Wrapper.validateSession(code, function(id) {
+      console.log("ID:" + id);
+      sessionId = id;
+
+    });
+
 
     res.status(200);
-    res.json({'sessionId': 'UnDeR CoNsTrUcTiOn', 'code': code});
+    res.json({'sessionId': sessionId, 'code': code});
 
   });
 
@@ -66,11 +123,16 @@ router.route('/clientcode')
     }
 
     let sessId = req.query.sessId;
+    let code;
 
-    //TODO: Generate a unique, not in use code
+
+    Wrapper.generateCode(sessId, function(newCode){
+      console.log("Code" + newCode);
+      code = newCode;
+    });
 
     res.status(200);
-    res.json({'code': 'UnDeR CoNsTrUcTiOn', 'sessId': sessId});
+    res.json({'code': code, 'sessId': sessId});
 
   });
 
@@ -128,7 +190,7 @@ router.route('/search')
 
   });
 
-reouter.route('/bid')
+router.route('/bid')
   .post(function(req, res){
     if(!req.body.cid){
       res.status(400);
