@@ -1,0 +1,38 @@
+<!--
+  Generated template for the LoginPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>Access your new session</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+
+
+  <ion-item>
+    <ion-label>Session code</ion-label>
+    <ion-input [(ngModel)]="sessCode" type="text"></ion-input>
+  </ion-item>
+
+  <div padding>
+    <button ion-button round block (click)="validateSession()"> Enter </button>
+  </div>
+  <br>
+  <ion-grid>
+    <ion-row>
+      <ion-col col-5></ion-col>
+      <ion-col col-4>
+        <ion-spinner *ngIf="spinToggle"></ion-spinner>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+
+</ion-content>
