@@ -103,24 +103,22 @@ router.route('/validatesession')
 
         let code = req.body.code;
 
-        let sessionId;
+        var sessionId;
 
         Wrapper.validateSession(code, function(id) {
             console.log("ID:" + id);
             sessionId = id;
 
-    });
-    console.log("SessionId fora do wrapper: " + sessionId)
+            if (sessionId) {
+                res.status(200);
+                res.json({ 'sessionId': sessionId, 'code': code });
+            } else {
+                res.status(400);
+                res.json({ 'error': 'No session found with this code', 'code': code });
+            }
+        });
 
-    if(sessionId){
-      res.status(200);
-      res.json({'sessionId': sessionId, 'code': code});
-    }
-    else{
-      res.status(400);
-      res.json({'error': 'No session found with this code', 'code': code});
-    }
-  });
+    });
 
 router.route('/clientcode')
     .get(function(req, res) {
@@ -133,22 +131,21 @@ router.route('/clientcode')
         let code;
 
 
-    Wrapper.generateCode(sessId, function(newCode){
-      console.log("Code " + newCode);
-      code = newCode;
+        Wrapper.generateCode(sessId, function(newCode) {
+            console.log("Code " + newCode);
+            code = newCode;
+        });
+
+        console.log("Code fora do wrapper: " + code)
+
+        if (code) {
+            res.status(200);
+            res.json({ 'code': code, 'sessId': sessId });
+        } else {
+            res.status(400);
+            res.json({ 'error': 'No session found with this sessionId', 'sessId': sessId });
+        }
     });
-
-    console.log("Code fora do wrapper: " + code)
-
-    if(code){
-      res.status(200);
-      res.json({'code': code, 'sessId': sessId});
-    }
-    else{
-      res.status(400);
-      res.json({'error': 'No session found with this sessionId', 'sessId': sessId});
-    }
-  });
 
 router.route('/debt')
     .get(function(req, res) {
