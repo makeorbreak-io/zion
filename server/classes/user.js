@@ -13,7 +13,7 @@ class User {
 
     static insertNew(token, refreshToken, callback) {
         var u = new User(0, token, refreshToken, 0);
-        u.scode = User.generateCode();
+        u.scode = User.generateScode();
         //insert into db
         User.getNextPort(function(port) {
             u.port = port;
@@ -37,7 +37,7 @@ class User {
         });
     }
 
-    static generateCode() {
+    static generateScode() {
         var text = "";
         var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
