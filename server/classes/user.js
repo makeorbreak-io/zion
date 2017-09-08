@@ -15,14 +15,10 @@ class User {
         var u = new User(0, token, refreshToken, 0);
         u.scode = User.generateScode();
         //insert into db
-        User.getNextPort(function(port) {
-            u.port = port;
-            dbcon.query('INSERT INTO users SET ?', { token: u.token, refreshToken: u.refreshToken, port: u.port, scode: u.scode }, function(err, result) {
-                if (err) throw err;
-                u.userId = result.insertId;
-                callback(u);
-            });
-
+        dbcon.query('INSERT INTO bids SET ?', { token: u.token, refreshToken: u.refreshToken, port: u.port, scode: u.scode }, function(err, result) {
+            if (err) throw err;
+            u.userId = result.insertId;
+            callback(u);
         });
     }
 
@@ -50,7 +46,6 @@ class User {
     static validateSession(scode, callback) {
         dbcon.query("SELECT userId FROM users WHERE scode = ?", [scode], function(err, result, fields) {
             if (err) throw err;
-            console.log(result);
             if (result.length == 0) {
                 callback(false);
                 return;
