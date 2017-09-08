@@ -31,6 +31,19 @@ class Wrapper {
     static validateCode(code, callback) {
         Code.validateCode(code, callback);
     }
+
+    //callback receives a list of songs
+    static search(query, codeId, callback) {
+        Code.getUserId(codeId, function(userId) {
+            User.getToken(userId, function(token) {
+                var songs = [];
+
+                //TODO: spotify search
+
+                callback(songs);
+            });
+        });
+    }
 }
 
 module.exports = Wrapper;
