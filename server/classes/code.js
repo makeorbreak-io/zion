@@ -32,6 +32,17 @@ class Code {
         });
     }
 
+    static getUserId(codeId, callback) {
+        dbcon.query("SELECT userId FROM codes WHERE codeId = ?", [codeId], function(err, result, fields) {
+            if (err) throw err;
+            if (result.length == 0) {
+                callback(false);
+                return;
+            }
+            callback(result[0].userID);
+        });
+    }
+
     static rndCode(userId) {
         var text = "";
         var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
