@@ -1,6 +1,7 @@
 'use strict';
 
 var dbcon = require('./dbcon.js');
+var Code = require('./code.js');
 
 class Bid {
     constructor(bidId, codeId, songId, amount, timestamp, roundId) {
@@ -18,7 +19,32 @@ class Bid {
         dbcon.query('INSERT INTO bids SET ?', { codeId: b.codeId, songId: b.songId, amount: b.amount }, function(err, result) {
             if (err) throw err;
             b.codeId = result.insertId;
+            //TODO: callback for websocket
             callback(b);
+        });
+    }
+
+    //posts a bid, 
+    static bid(codeId, songId, amount, callback) {
+        //try to get an open round
+        Code.getUserId(codeId, function(userId) {
+            dbcon.query("SELECT roundId FROM rounds WHERE userID = ? AND start < NOW() AND NOW() < end LIMIT 1", [userId], function(err, result, fields) {
+                if (err) throw err;
+                var roundId;
+                if (result.length == 0) {
+                    //if not, create a new round, setting the end timeout
+                    dbcon.query('INSERT INTO rounds SET userId = ?, end = CURRENT_TIMESTAMP + INTERVAL 5 SECOND', [userId], function(err, result) {
+                        if (err) throw err;
+                        roundId = result.insertId;
+                        Bid.insertNew(codeId, songId, amount, roundId, callback); //insert bid
+                    });
+                } else {
+                    //if an open round exists -> use
+                    roundId = result[0].roundId;
+                    Bid.insertNew(codeId, songId, amount, roundId, callback); //insert bid
+                }
+
+            });
         });
     }
 

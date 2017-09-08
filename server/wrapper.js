@@ -44,6 +44,11 @@ class Wrapper {
             });
         });
     }
+
+    //return a bid
+    static bid(codeId, songId, amount, callback) {
+        Bid.bid(codeId, songId, amount, callback);
+    }
 }
 
 module.exports = Wrapper;
