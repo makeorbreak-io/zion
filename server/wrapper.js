@@ -22,9 +22,14 @@ class Wrapper {
         });
     }
 
-    //callback receives double representing total in euros
-    static getDebt(code, callback) {
-        Bid.getDebt(code, callback);
+    //callback receives double representing total debt in euros
+    static getDebt(codeId, callback) {
+        Bid.getDebt(codeId, callback);
+    }
+
+    //callback receives codeId
+    static validateCode(code, callback) {
+        Code.validateCode(code, callback);
     }
 }
 

@@ -3,13 +3,13 @@
 var dbcon = require('./dbcon.js');
 
 class Bid {
-    constructor(bidId, codeId, songId, amount, timestamp, roundID) {
+    constructor(bidId, codeId, songId, amount, timestamp, roundId) {
         this.bidId = bidId;
         this.codeId = codeId;
         this.songId = songId;
         this.amount = amount;
         this.timestamp = timestamp;
-        this.roundID = roundID;
+        this.roundId = roundId;
     }
 
     static insertNew(codeId, songId, amount, roundId, callback) {
@@ -22,12 +22,19 @@ class Bid {
         });
     }
 
+    //callback receives debt
     static getDebt(codeId, callback) {
-        dbcon.query("SELECT amount, roundId FROM bids WHERE codeId = ? ORDER BY roundId, timestamp DESC", [codeId], function(err, result, fields) {
+        dbcon.query("SELECT amount, roundId FROM bids WHERE codeId = ? ORDER BY roundId, amount DESC", [codeId], function(err, result, fields) {
             if (err) throw err;
+            var checkedRounds = [];
+            var debt = 0;
             result.forEach(function(element) {
-                console.log(element);
+                if (checkedRounds.indexOf(element.roundId) == -1) {
+                    debt += element.amount;
+                    checkedRounds.push(element.roundId);
+                }
             }, this);
+            callback(debt);
         });
     }
 
