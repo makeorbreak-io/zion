@@ -33,6 +33,17 @@ class User {
         });
     }
 
+    static validateSession(scode, callback) {
+        dbcon.query("SELECT userId FROM users WHERE scode = ?", [scode], function(err, result, fields) {
+            if (err) throw err;
+            if (result.length == 0) {
+                callback(false);
+                return;
+            }
+            callback(result[0].userId);
+        });
+    }
+
     static getToken(userId, callback) {
         dbcon.query("SELECT token FROM users WHERE userId = ?", [userId], function(err, result, fields) {
             if (err) throw err;
@@ -52,17 +63,6 @@ class User {
             text += possible.charAt(Math.floor(Math.random() * possible.length));
 
         return text;
-    }
-
-    static validateSession(scode, callback) {
-        dbcon.query("SELECT userId FROM users WHERE scode = ?", [scode], function(err, result, fields) {
-            if (err) throw err;
-            if (result.length == 0) {
-                callback(false);
-                return;
-            }
-            callback(result[0].userId);
-        });
     }
 }
 
