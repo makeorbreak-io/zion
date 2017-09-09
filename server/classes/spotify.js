@@ -16,6 +16,7 @@ class Spotify {
 
     search(q, attempt, callback, userId) {
         console.log("attempt: " + attempt);
+        attempt = parseInt(attempt);
         if (attempt > 3) {
             callback([]);
             return;
@@ -41,7 +42,7 @@ class Spotify {
                 callback(response);
             } else {
                 Spotify.testToken(response, function() {
-                    spot.search(q, Number(attempt) + 1, callback);
+                    spot.search(q, parseInt(parseInt(attempt) + 1), callback);
                 });
             }
         });
