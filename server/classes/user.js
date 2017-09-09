@@ -12,6 +12,8 @@ class User {
         this.refreshToken = refreshToken;
         this.port = port;
         this.scode = scode;
+
+
         if (port != undefined) {
             this.notifyWebSocket("started");
         }
@@ -26,6 +28,12 @@ class User {
             }
             var u = new User(result[0].userId, result[0].token, result[0].refreshToken, result[0].port, result[0].scode);
             callback(u);
+        });
+    }
+
+    static update(token, userId) {
+        con.query("UPDATE users SET token = '?' WHERE userId = '?'", [token, userId], function(err, result) {
+            if (err) throw err;
         });
     }
 
@@ -89,7 +97,7 @@ class User {
 
     notifyWebSocket(message) {
         var data = { port: this.port, message: message };
-        request({ irl: 'http://138.68.143.160:7999/', qs: data }, function(error, response, body) {
+        request({ url: 'http://138.68.143.160:7999/', qs: data }, function(error, response, body) {
             console.log('error:', error); // Print the error if one occurred
             console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
             console.log('body:', body); // Print the HTML for the Google homepage.

@@ -39,7 +39,7 @@ class Wrapper {
         Code.getUserId(codeId, function(userId) {
             User.getToken(userId, function(token) {
                 var s = new Spotify(token);
-                s.search(query, callback);
+                s.search(query, 1, callback, userId);
             });
         });
     }
