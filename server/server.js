@@ -247,8 +247,8 @@ router.route('/bid')
             res.json({ 'error': 'No amount in request params' });
         }
 
-        let cid = request.body.cid;
-        let sid = request.body.sid;
+        let cid = req.body.cid;
+        let sid = req.body.sid;
         let amount = req.body.amount;
 
         Wrapper.bid(cid, sid, amount, function(result){
@@ -260,7 +260,7 @@ router.route('/bid')
             res.json({});
           }
         });
-    });
+    })
 
     .get(function(req, res){
       if (!req.query.cid) {
@@ -271,7 +271,7 @@ router.route('/bid')
       let cid = req.query.cid;
 
       Wrapper.getBids(cid, function(bids){
-        if(bids){
+        if(bids != null){
           res.status(200);
           res.json({'bids': bids});
 
@@ -279,7 +279,7 @@ router.route('/bid')
           res.status(400);
           res.json({'error': 'Error retireving bids for current round'});
         }
-      };
+      });
     });
 
 

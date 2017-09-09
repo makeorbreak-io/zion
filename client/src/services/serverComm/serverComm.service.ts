@@ -22,7 +22,7 @@ export class ServerCommService{
 
     let options = new RequestOptions({params: reqParams});
 
-    return this.http.get(this.url+validateSessUrl, options).map((res:Response) => res.json()).catch((error:any) => Observable.throw(error.json().error || 'Server error'));
+    return this.http.get(this.mainUrl +validateSessUrl, options).map((res:Response) => res.json()).catch((error:any) => Observable.throw(error.json().error || 'Server error'));
 
   }
 
