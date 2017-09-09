@@ -5,16 +5,20 @@ var User = require('./user.js');
 const request = require('request'); // "Request" library
 
 class Spotify {
-    constructor(token, refreshToken) {
+    constructor(token, refreshToken, userId) {
         this.token = token;
         this.refreshToken = refreshToken;
+        this.userId = userId; //does not go into database
     }
 
     search(q, callback) {
+        if (this.q == undefined) {
+            this.q = q;
+        }
         var authOptions = {
             url: 'https://api.spotify.com/v1/search',
             qs: {
-                q: q,
+                q: this.q,
                 type: "album,track,playlist,artist",
                 grant_type: 'authorization_code'
             },
@@ -23,15 +27,43 @@ class Spotify {
                 'Authorization': 'Bearer ' + this.token
             }
         };
-        console.log("TOKEN: " + this.token);
         request.get(authOptions, function(error, response, body) {
-            console.log(JSON.stringify(response));
+            //console.log(JSON.stringify(response));
             if (!error && response.statusCode === 200) {
                 callback(response);
             } else {
-                callback([]);
+                Spotify.testToken(response, function() {
+                    Spotify.search(q, callback);
+                });
             }
         });
+    }
+
+    static testToken(response, callback) {
+        if (response.statusCode == "401") { //token expired -> get new
+            console.log("refreshToken!!!!!!!!!!!!");
+            //
+
+            User.load(userId, function(user) {
+                var authOptions = {
+                    url: 'https://accounts.spotify.com/api/token',
+                    form: {
+                        grant_type: "refresh_token",
+                        refresh_token: user.refreshToken
+                    },
+                    headers: {
+                        'Authorization': 'Basic ' + (new Buffer(user.client_id + ':' + user.client_secret).toString('base64'))
+                    }
+                };
+                request.get(authOptions, function(error, response, body) {
+                    //console.log(JSON.stringify(response));
+                    if (!error && response.statusCode === 200) {
+                        User.update(user.userId, response.access_token);
+                        callback();
+                    }
+                });
+            });
+        }
     }
 }
 module.exports = Spotify;
