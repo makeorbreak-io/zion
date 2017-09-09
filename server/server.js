@@ -224,10 +224,6 @@ router.route('/search')
                 res.json({ 'error': 'There was an error searching for songs' });
             }
         })
-
-        res.status(200);
-        res.json({ results: [] })
-
     });
 
 router.route('/bid')

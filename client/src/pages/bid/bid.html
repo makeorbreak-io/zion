@@ -7,7 +7,7 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-title>bid</ion-title>
+    <ion-title>Search songs</ion-title>
   </ion-navbar>
 
 </ion-header>
@@ -17,14 +17,42 @@
   <ion-card>
     <strong>Code: </strong> {{code}}
   </ion-card>
-
+  <br>
   <ion-item>
-    <ion-label>Search for songs</ion-label>
+    <ion-label>Search songs</ion-label>
     <ion-input [(ngModel)]="searchQuery" type="text"></ion-input>
   </ion-item>
 
+  <div padding>
+    <button ion-button round block (click)="search()"> Search </button>
+  </div>
+
+  <ion-list *ngIf="showSearch">
+    <ion-item *ngFor="let result of searchResults" (click)="selectSong(result.name, result.artist, result.songUri)">
+      {{result.name}} - {{result.artist}}
+    </ion-item>
+  </ion-list>
+
   <ion-card>
-    <strong>Current selected song: </strong> {{selectedSong}}
+    <strong>Your selected song: </strong> <div *ngIf="selectedSong">{{selectedSong.name}} - {{selectedSong.artist}}</div>
   </ion-card>
+  <br><br><br><br><br>
+  <ion-item>
+    <ion-label>Amount</ion-label>
+    <ion-input [(ngModel)]="bidAmount" type="text"></ion-input>
+  </ion-item>
+
+  <div padding>
+    <button ion-button round block (click)="makeBid()"> Make a bid </button>
+  </div>
+
+  <br><br><br><br><br>
+  <ion-card>
+    <strong>Top bid: </strong> {{topBid}}
+    <br>
+    <strong>Top song: </strong> {{topSong}}
+  </ion-card>
+
+
 
 </ion-content>
