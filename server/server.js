@@ -279,8 +279,7 @@ router.route('/bid')
           res.status(400);
           res.json({'error': 'Error retireving bids for current round'});
         }
-      })
-
+      };
     });
 
 
