@@ -39,7 +39,7 @@ class Code {
                 callback(false);
                 return;
             }
-            callback(result[0].userID);
+            callback(result[0].userId);
         });
     }
 

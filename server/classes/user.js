@@ -13,21 +13,14 @@ class User {
         this.webSocket = undefined;
     }
 
-
-
     static load(userId, callback) {
-        var u = new User(userId);
         dbcon.query("SELECT * FROM users WHERE userId = ? LIMIT 1", [userId], function(err, result, fields) {
             if (err) throw err;
             if (result.length == 0) {
                 callback(false);
                 return;
             }
-            u.userId = result[0].userId;
-            u.token = result[0].token;
-            u.refreshToken = result[0].refreshToken;
-            u.port = result[0].port;
-            u.scode = result[0].scode;
+            var u = new User(result[0].userId, result[0].token, result[0].refreshToken, result[0].port, result[0].scode);
             callback(u);
         });
     }
@@ -89,15 +82,15 @@ class User {
         return text;
     }
 
-    getWebSocket() {
+    notifyWebSocket(bid) {
         this.webSocket = new WebSocket.Server({ port: this.port });
 
         this.webSocket.on('connection', function connection(ws) {
-            ws.on('message', function incoming(message) {
+            /*ws.on('message', function incoming(message) {
                 console.log('received: %s', message);
-            });
-
-            ws.send('something from the server');
+            });*/
+            console.log("WEBSOCKET sending: " + JSON.stringify(bid));
+            ws.send(JSON.stringify(bid));
         });
     }
 }

@@ -2,6 +2,7 @@
 
 var dbcon = require('./dbcon.js');
 var Code = require('./code.js');
+var User = require('./user.js');
 
 class Bid {
     constructor(bidId, codeId, songId, amount, timestamp, roundId) {
@@ -13,25 +14,32 @@ class Bid {
         this.roundId = roundId;
     }
 
+    //userId is optional
     static insertNew(codeId, songId, amount, roundId, callback) {
-        var b = new Bid(0, codeId, codeId, amount, 0, roundId);
-        //insert into db
-        dbcon.query('INSERT INTO bids SET ?', { codeId: b.codeId, songId: b.songId, amount: b.amount }, function(err, result) {
-            if (err) throw err;
-            b.codeId = result.insertId;
-            //TODO: callback for websocket
-            var u = User.load(this.tempUserId);
-
-            callback(b);
+        Code.getUserId(codeId, function(userId) {
+            var b = new Bid(0, codeId, codeId, amount, 0, roundId);
+            //insert into db
+            dbcon.query('INSERT INTO bids SET ?', { codeId: b.codeId, songId: b.songId, amount: b.amount }, function(err, result) {
+                if (err) throw err;
+                b.codeId = result.insertId;
+                User.load(userId, function(u) {
+                    if (u == false) {
+                        console.log("user load returned false");
+                        return;
+                    }
+                    u.notifyWebSocket(this);
+                    callback(b);
+                });
+            });
         });
+
     }
 
     //posts a bid, 
     static bid(codeId, songId, amount, callback) {
         //try to get an open round
         Code.getUserId(codeId, function(userId) {
-            this.tempUserId = userId; //used when duplicate calls apply
-            dbcon.query("SELECT roundId FROM rounds WHERE userID = ? AND start < NOW() AND NOW() < end LIMIT 1", [userId], function(err, result, fields) {
+            dbcon.query("SELECT roundId FROM rounds WHERE userId = ? AND start < NOW() AND NOW() < end LIMIT 1", [userId], function(err, result, fields) {
                 if (err) throw err;
                 var roundId;
                 if (result.length == 0) {
