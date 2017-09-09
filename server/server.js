@@ -12,7 +12,7 @@ const router = express.Router();
 
 const client_id = "ef3393f29a2d47eaa662d0e913abcef5";
 const client_secret = "05438ca3a01845f59ce0f3bafdfd1f48";
-let redirect_uri = "http://138.68.143.160:8888/callback"; //TEM QUE SE MUDAR AO DESPOIS
+let redirect_uri = "http://138.68.143.160:8000/callback"; //TEM QUE SE MUDAR AO DESPOIS
 
 const app = express();
 
@@ -270,10 +270,10 @@ router.route('/bid')
 
     let cid = req.query.cid;
 
-      Wrapper.getBids(cid, function(bids){
-        if(bids != null){
-          res.status(200);
-          res.json({'bids': bids});
+    Wrapper.getBids(cid, function(bids) {
+        if (bids != null) {
+            res.status(200);
+            res.json({ 'bids': bids });
 
         } else {
             res.status(400);
@@ -292,4 +292,4 @@ router.route('/test')
 
 app.use('/', router);
 console.log("ready");
-app.listen(8888);
+app.listen(8000);
