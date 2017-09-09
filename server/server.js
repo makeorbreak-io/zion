@@ -33,7 +33,7 @@ router.route('/login')
         res.cookie(stateKey, state);
 
         // your application requests authorization
-        var scope = 'user-read-private user-read-email';
+        var scope = 'user-read-private user-read-email playlist-modify-public playlist-modify-private user-read-playback-state user-modify-playback-state user-read-currently-playing';
         res.redirect('https://accounts.spotify.com/authorize?' +
             querystring.stringify({
                 response_type: 'code',
@@ -213,6 +213,7 @@ router.route('/search')
             res.json({ 'error': 'No codeId in request params' });
             return;
         }
+        console.log("searching...");
 
         let searchQuery = req.query.query;
         let id = req.query.id;

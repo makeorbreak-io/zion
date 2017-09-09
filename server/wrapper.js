@@ -37,8 +37,8 @@ class Wrapper {
     //callback receives a list of songs
     static search(query, codeId, callback) {
         Code.getUserId(codeId, function(userId) {
-            User.getToken(userId, function(token) {
-                var s = new Spotify(token);
+            User.getToken(userId, function(t) {
+                var s = new Spotify(t.token, t.refreshToken);
                 s.search(query, 1, callback, userId);
             });
         });
@@ -52,6 +52,27 @@ class Wrapper {
     //callback receives a list of Bids
     static getBids(codeId, callback) {
         Bid.getBids(codeId, callback);
+    }
+
+    //returns playlist id
+    static createPlayList(codeId, callback) {
+        Code.getUserId(codeId, function(userId) {
+            User.getToken(userId, function(t) {
+                console.log("t is: " + JSON.stringify(t));
+                var s = new Spotify(t.token, t.refreshToken);
+                s.createPlayList(callback);
+            });
+        });
+    }
+
+    //addTracksToPlay
+    static addTracksToPlaylist(codeId, playListId, songs, callback) {
+        Code.getUserId(codeId, function(userId) {
+            User.getToken(userId, function(t) {
+                var s = new Spotify(t.token, t.refreshToken);
+                s.addTracksToPlaylist(playListId, songs, callback);
+            });
+        });
     }
 
     static resetDatabase(callback) {
