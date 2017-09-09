@@ -12,7 +12,7 @@ const router = express.Router();
 
 const client_id = "ef3393f29a2d47eaa662d0e913abcef5";
 const client_secret = "05438ca3a01845f59ce0f3bafdfd1f48";
-let redirect_uri = "http://localhost:8888/callback"; //TEM QUE SE MUDAR AO DESPOIS
+let redirect_uri = "http://138.68.143.160:8888/callback"; //TEM QUE SE MUDAR AO DESPOIS
 
 const app = express();
 
@@ -167,10 +167,15 @@ router.route('/debt')
 
         let code = res.query.code;
 
-        //TODO: get client's debt from DB
-
-        res.status(200);
-        res.json({ 'code': code, 'debt': 'UnDeR CoNsTrUcTiOn' });
+        Wrapper.getDebt(code, function(debt){
+          if(debt){
+            res.status(200);
+            res.json({ 'code': code, 'debt': debt });
+          } else{
+            res.status(400);
+            res.json({ 'error': 'Error processing client\'s debt', 'code': code });
+          }
+        })
     });
 
 /* Client-related endpoints */
@@ -184,7 +189,15 @@ router.route('/validatecode')
 
         let code = res.query.code;
 
-        //TODO: get client's codeId from DB
+        Wrapper.validateCode(code, function(codeId){
+          if(codeId){
+            res.status(200);
+            res.json({ 'codeId': codeId, 'code': code });
+          } else{
+            res.status(400);
+            res.json({ 'error': 'The code provided is unavailable', 'code': code });
+          }
+        })
 
         res.status(200);
         res.json({ 'codeId': 'UnDeR CoNsTrUcTiOn' });
@@ -205,7 +218,15 @@ router.route('/search')
         let searchQuery = req.query.query;
         let id = req.query.id;
 
-        //TODO: Search for songs with spotify api
+        Wrapper.search(searchQuery, id, function(results){
+          if(results){
+            res.status(200);
+            res.json({ 'results': results, 'query': searchQuery });
+          } else{
+            res.status(400);
+            res.json({ 'error': 'There was an error searching for songs'});
+          }
+        })
 
         res.status(200);
         res.json({ results: [] })
@@ -232,6 +253,14 @@ router.route('/bid')
         let cid = request.body.cid;
         let sid = request.body.sid;
         let amount = request.body.amount;
+
+        Wrapper.bid(cid, sid, amount, function(result){
+          if(result){
+            res.status(200);
+          } else{
+            res.status(400);
+          }
+        })
 
         //TODO: Place bid in DB
 
