@@ -29,12 +29,25 @@ export class ServerCommService{
 
     let headers = new Headers({ 'Content-Type': 'application/json' });
     let params = new URLSearchParams();
-    params.append({'sessId': sessionId});
 
-    let options = new RequestOptions({ headers: headers });
+    params.append('sessId', sessionId);
 
-    return this.http.get(this.mainUrl+this.genCodeUrl, options).map((res: Response) => res.json()).catch((error:any) => Observable.throw(error.json().error || 'Server error'));
+    let options = new RequestOptions({ headers: headers, search: params });
+
+    return this.http.get(this.mainUrl+genCodeUrl, options).map((res: Response) => res.json()).catch((error:any) => Observable.throw(error.json().error || 'Server error'));
 
   }
+
+  debtLookup(code){
+    let debtUrl = "/debt";
+
+    let headers = new Headers({ 'Content-Type': 'application/json' });
+    let params = new URLSearchParams();
+
+    params.append('code', code);
+
+    let options = new RequestOptions({ headers: headers, search: params });
+
+    return this.http.get(this.mainUrl+debtUrl, options).map((res: Response) => res.json()).catch((error:any) => Observable.throw(error.json().error || 'Server error'));
+  }
 }
-()

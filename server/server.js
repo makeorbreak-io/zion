@@ -165,10 +165,10 @@ router.route('/debt')
             res.json({ 'error': 'No code in request params' });
         }
 
-        let code = res.query.code;
+        let code = req.query.code;
 
         Wrapper.getDebt(code, function(debt) {
-            if (isNumber(debt)) {
+            if (!isNaN(debt)) {
                 res.status(200);
                 res.json({ 'code': code, 'debt': debt });
             } else {
