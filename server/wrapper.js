@@ -4,6 +4,7 @@ var dbcon = require('./classes/dbcon.js');
 var User = require('./classes/user.js');
 var Code = require('./classes/code.js');
 var Bid = require('./classes/bid.js');
+var Spotify = require('./classes/spotify.js');
 
 class Wrapper {
     //callback receives new User 
@@ -37,11 +38,8 @@ class Wrapper {
     static search(query, codeId, callback) {
         Code.getUserId(codeId, function(userId) {
             User.getToken(userId, function(token) {
-                var songs = [];
-
-                //TODO: spotify search
-
-                callback(songs);
+                var s = new Spotify(token);
+                s.search(query, callback);
             });
         });
     }
