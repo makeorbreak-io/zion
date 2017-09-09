@@ -108,11 +108,16 @@ router.route('/validatesession')
       sessionId = id;
 
     });
+    console.log("SessionId fora do wrapper: " + sessionId)
 
-
-    res.status(200);
-    res.json({'sessionId': sessionId, 'code': code});
-
+    if(sessionId){
+      res.status(200);
+      res.json({'sessionId': sessionId, 'code': code});
+    }
+    else{
+      res.status(400);
+      res.json({'error': 'No session found with this code', 'code': code});
+    }
   });
 
 router.route('/clientcode')
@@ -127,13 +132,20 @@ router.route('/clientcode')
 
 
     Wrapper.generateCode(sessId, function(newCode){
-      console.log("Code" + newCode);
+      console.log("Code " + newCode);
       code = newCode;
     });
 
-    res.status(200);
-    res.json({'code': code, 'sessId': sessId});
+    console.log("Code fora do wrapper: " + code)
 
+    if(code){
+      res.status(200);
+      res.json({'code': code, 'sessId': sessId});
+    }
+    else{
+      res.status(400);
+      res.json({'error': 'No session found with this sessionId', 'sessId': sessId});
+    }
   });
 
 router.route('/debt')
