@@ -21,6 +21,27 @@ class Code {
         });
     }
 
+    static validateCode(code, callback) {
+        dbcon.query("SELECT codeId FROM codes WHERE code = ?", [code], function(err, result, fields) {
+            if (err) throw err;
+            if (result.length == 0) {
+                callback(false);
+                return;
+            }
+            callback(result[0].codeId);
+        });
+    }
+
+    static getUserId(codeId, callback) {
+        dbcon.query("SELECT userId FROM codes WHERE codeId = ?", [codeId], function(err, result, fields) {
+            if (err) throw err;
+            if (result.length == 0) {
+                callback(false);
+                return;
+            }
+            callback(result[0].userID);
+        });
+    }
 
     static rndCode(userId) {
         var text = "";

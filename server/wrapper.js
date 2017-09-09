@@ -22,9 +22,32 @@ class Wrapper {
         });
     }
 
-    //callback receives double representing total in euros
-    static getDebt(code, callback) {
-        Bid.getDebt(code, callback);
+    //callback receives double representing total debt in euros
+    static getDebt(codeId, callback) {
+        Bid.getDebt(codeId, callback);
+    }
+
+    //callback receives codeId
+    static validateCode(code, callback) {
+        Code.validateCode(code, callback);
+    }
+
+    //callback receives a list of songs
+    static search(query, codeId, callback) {
+        Code.getUserId(codeId, function(userId) {
+            User.getToken(userId, function(token) {
+                var songs = [];
+
+                //TODO: spotify search
+
+                callback(songs);
+            });
+        });
+    }
+
+    //return a bid
+    static bid(codeId, songId, amount, callback) {
+        Bid.bid(codeId, songId, amount, callback);
     }
 }
 
