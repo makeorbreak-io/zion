@@ -77,8 +77,12 @@ class Wrapper {
 
     //callback receives timestamp for the end of the current round
     static getRoundTime(port, callback) {
-        dbcon.query("SELECT end FROM rounds WHERE userId = (SELECT userId FROM users WHERE port = ?)) AND start < NOW() AND NOW() < end LIMIT 1", [port], function(err, result, fields) {
+        dbcon.query("SELECT end FROM rounds WHERE userId = (SELECT userId FROM users WHERE port = ?) AND start < NOW() AND NOW() < end LIMIT 1", [port], function(err, result, fields) {
             if (err) throw err;
+            if (result.length == 0) {
+                callback(-1);
+                return;
+            }
             callback(result[0].end);
         });
     }

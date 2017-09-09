@@ -29,7 +29,7 @@ class Bid {
                     }
                     b.title = title;
                     b.artist = artist;
-                    u.notifyWebSocket(JSON.stringify(b));
+                    u.notifyWebSocket(JSON.stringify({ action: "bid", data: b, type: "bid" }));
                     callback(b);
                 });
             });
@@ -50,7 +50,22 @@ class Bid {
                         if (err) throw err;
                         roundId = result.insertId;
                         Bid.insertNew(codeId, songId, amount, roundId, title, artist, callback); //insert bid
+
+                        dbcon.query("SELECT end FROM rounds WHERE roundId = ? LIMIT 1", [roundId], function(err, result, fields) {
+                            if (err) throw err;
+                            if (result.length == 0) {
+                                callback(false);
+                                return;
+                            }
+                            User.load(userId, function(u) {
+                                //tell the websocket manager to take control of the time for this round
+                                var end = (new Date(Date.parse(result[0].end)).getTime() / 1000)
+                                u.notifyWebSocket(JSON.stringify({ action: "round", type: "round", data: { roundId: roundId, end: end } }));
+                            });
+                        });
+
                     });
+
                 } else {
                     //if an open round exists -> use
                     roundId = result[0].roundId;
