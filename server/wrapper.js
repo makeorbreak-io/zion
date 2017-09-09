@@ -49,6 +49,11 @@ class Wrapper {
     static bid(codeId, songId, amount, callback) {
         Bid.bid(codeId, songId, amount, callback);
     }
+
+    //callback receives a list of Bids
+    static getBids(codeId, callback) {
+        Bid.getBids(codeId, callback);
+    }
 }
 
 module.exports = Wrapper;
