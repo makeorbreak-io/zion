@@ -20,12 +20,13 @@ class Spotify {
             },
             headers: {
                 //'Authorization': 'Basic ' + (new Buffer(client_id + ':' + client_secret).toString('base64'))
-                'Authorization': this.token
+                'Authorization': 'Bearer ' + this.token
             }
         };
+        console.log("TOKEN: " + this.token);
         request.get(authOptions, function(error, response, body) {
+            console.log(JSON.stringify(response));
             if (!error && response.statusCode === 200) {
-                console.log(JSON.stringify(response));
                 callback(response);
             } else {
                 callback([]);
@@ -33,3 +34,4 @@ class Spotify {
         });
     }
 }
+module.exports = Spotify;
