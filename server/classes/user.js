@@ -1,6 +1,8 @@
 'use strict';
 
 var dbcon = require('./dbcon.js');
+
+const request = require('request'); // "Request" library
 const WebSocket = require('ws');
 
 class User {
@@ -10,7 +12,9 @@ class User {
         this.refreshToken = refreshToken;
         this.port = port;
         this.scode = scode;
-        this.notifyWebSocket("started");
+        if (port != undefined) {
+            this.notifyWebSocket("started");
+        }
     }
 
     static load(userId, callback) {
@@ -34,6 +38,7 @@ class User {
             dbcon.query('INSERT INTO users SET ?', { token: u.token, refreshToken: u.refreshToken, port: u.port, scode: u.scode }, function(err, result) {
                 if (err) throw err;
                 u.userId = result.insertId;
+                u.notifyWebSocket("started");
                 callback(u);
             });
         });
@@ -82,16 +87,23 @@ class User {
         return text;
     }
 
-    notifyWebSocket(bid) {
-        this.webSocket = new WebSocket.Server({ port: this.port });
-
-        this.webSocket.on('connection', function connection(ws) {
-            /*ws.on('message', function incoming(message) {
-                console.log('received: %s', message);
-            });*/
-            console.log("WEBSOCKET sending: " + JSON.stringify(bid));
-            ws.send(JSON.stringify(bid));
+    notifyWebSocket(message) {
+        var data = { port: this.port, message: message };
+        request({ irl: 'http://138.68.143.160:7999/', qs: data }, function(error, response, body) {
+            console.log('error:', error); // Print the error if one occurred
+            console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+            console.log('body:', body); // Print the HTML for the Google homepage.
         });
+        /* 
+        console.log("WEBSOCKET shhould: " + message);
+        this.webSocket = new WebSocket.Server({ port: this.port });
+        this.webSocket.on('connection', function connection(ws) {
+            ws.on('message', function incoming(message) {
+                console.log('received: %s', message);
+            });
+            console.log("WEBSOCKET sending: " + JSON.stringify(message));
+            ws.send(JSON.stringify(message));
+        }); */
     }
 }
 
