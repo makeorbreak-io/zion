@@ -19,7 +19,7 @@ class Bid {
         Code.getUserId(codeId, function(userId) {
             var b = new Bid(0, codeId, codeId, amount, 0, roundId);
             //insert into db
-            dbcon.query('INSERT INTO bids SET ?', { codeId: b.codeId, songId: b.songId, amount: b.amount }, function(err, result) {
+            dbcon.query('INSERT INTO bids SET ?', { codeId: b.codeId, songId: b.songId, amount: b.amount, roundId: b.roundId }, function(err, result) {
                 if (err) throw err;
                 b.codeId = result.insertId;
                 User.load(userId, function(u) {
@@ -75,6 +75,24 @@ class Bid {
         });
     }
 
+    static getBids(codeId, callback) {
+        Code.getUserId(codeId, function(userId) {
+            console.log(codeId);
+            dbcon.query("SELECT * FROM bids WHERE roundId = (SELECT roundId FROM rounds WHERE userId = ? AND start < NOW() AND NOW() < end LIMIT 1) ORDER BY amount DESC", [userId], function(err, result, fields) {
+                if (err) throw err;
+                var roundId;
+                if (result.length == 0) {
+                    callback(false);
+                    return;
+                }
+                var bids = result.map(function(e) {
+                    return new Bid(e.bidId, e.codeId, e.songId, e.amount, e.timestamp, e.roundId);
+                });
+                console.log(JSON.stringify(bids));
+                callback(bids);
+            });
+        });
+    }
 }
 
 module.exports = Bid;
