@@ -12,6 +12,7 @@ class Spotify {
         this.token = token;
         this.refreshToken = refreshToken;
         this.userId = userId; //does not go into database
+        this.playlistId = undefined; //does not go into database
     }
 
     search(q, attempt, callback, userId) {
@@ -45,6 +46,74 @@ class Spotify {
                     spot.search(q, parseInt(parseInt(attempt) + 1), callback);
                 });
             }
+        });
+    }
+
+    getUserId(callback) {
+        var t_token = this.token;
+        var authOptions = {
+            url: 'https://api.spotify.com/v1/me',
+            qs: {
+                q: this.q
+            },
+            headers: {
+                'Authorization': 'Bearer ' + t_token
+            }
+        };
+        request.get(authOptions, function(error, response, body) {
+            if (!error && response.statusCode === 200) {
+                callback(response.id);
+            } else {
+                callback(false);
+            }
+        });
+    }
+    createPlayList(callback) {
+        var t_token = this.token;
+        if (this.playlistId != undefined) {
+            callback(this.playlistId);
+            return;
+        }
+        var name = "jukibify";
+        this.getUserId(function(spotify_user_id) {
+            var authOptions = {
+                url: 'https://api.spotify.com/v1/users/' + spotify_user_id + '/playlists',
+                form: {
+                    name: name
+                },
+                headers: {
+                    'Authorization': 'Bearer ' + t_token,
+                    'Content-Type': 'application/json'
+                }
+            };
+            request.post(authOptions, function(error, response, body) {
+                if (!error && response.statusCode === 200) {
+                    callback(response.id); //playlistId
+                } else {
+                    callback(false);
+                }
+            });
+        });
+    }
+    addTracksToPlaylist(playListId, songs, callback) {
+        this.getUserId(function(spotify_user_id) {
+            var authOptions = {
+                url: 'https://api.spotify.com/v1/users/' + spotify_user_id + '/playlists/' + playListId + '/tracks',
+                form: {
+                    uris: songs
+                },
+                headers: {
+                    'Authorization': 'Bearer ' + this.token,
+                    'Content-Type': 'application/json'
+                }
+            };
+            request.post(authOptions, function(error, response, body) {
+                if (!error && response.statusCode === 201) {
+                    callback(true); //playlistId
+                } else {
+                    callback(false);
+                }
+            });
         });
     }
 

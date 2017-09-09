@@ -75,13 +75,13 @@ class User {
     }
 
     static getToken(userId, callback) {
-        dbcon.query("SELECT token FROM users WHERE userId = ?", [userId], function(err, result, fields) {
+        dbcon.query("SELECT token, refreshToken FROM users WHERE userId = ?", [userId], function(err, result, fields) {
             if (err) throw err;
             if (result.length == 0) {
                 callback(false);
                 return;
             }
-            callback(result[0].token);
+            callback({ token: result[0].token, refreshToken: result[0].refreshToken });
         });
     }
 
