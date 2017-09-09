@@ -42,9 +42,7 @@ class Spotify {
     static testToken(response, callback) {
         if (response.statusCode == "401") { //token expired -> get new
             console.log("refreshToken!!!!!!!!!!!!");
-            //
-
-            User.load(userId, function(user) {
+            User.load(this.userId, function(user) {
                 var authOptions = {
                     url: 'https://accounts.spotify.com/api/token',
                     form: {
@@ -60,9 +58,13 @@ class Spotify {
                     if (!error && response.statusCode === 200) {
                         User.update(user.userId, response.access_token);
                         callback();
+                    } else {
+                        callback([]);
                     }
                 });
             });
+        } else {
+            callback([]);
         }
     }
 }
