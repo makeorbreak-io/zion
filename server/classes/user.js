@@ -94,7 +94,7 @@ class User {
             console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
             console.log('body:', body); // Print the HTML for the Google homepage.
         });
-
+        /* 
         console.log("WEBSOCKET shhould: " + message);
         this.webSocket = new WebSocket.Server({ port: this.port });
         this.webSocket.on('connection', function connection(ws) {
@@ -103,7 +103,7 @@ class User {
             });
             console.log("WEBSOCKET sending: " + JSON.stringify(message));
             ws.send(JSON.stringify(message));
-        });
+        }); */
     }
 }
 
