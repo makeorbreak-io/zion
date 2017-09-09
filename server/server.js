@@ -6,7 +6,7 @@ const querystring = require('querystring');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 
-//const Wrapper = require('./wrapper.js');
+const Wrapper = require('./wrapper.js');
 
 const router = express.Router();
 
