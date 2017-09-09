@@ -6,12 +6,17 @@ const request = require('request'); // "Request" library
 const WebSocket = require('ws');
 
 class User {
-    constructor(userId, token, refreshToken, port, scode) {
+    constructor(userId, token, refreshToken, port, scode, client_id, client_secret) {
         this.userId = userId;
         this.token = token;
         this.refreshToken = refreshToken;
         this.port = port;
         this.scode = scode;
+
+
+        this.client_id = client_id;
+        this.client_secret = client_secret;
+
         if (port != undefined) {
             this.notifyWebSocket("started");
         }
@@ -24,18 +29,24 @@ class User {
                 callback(false);
                 return;
             }
-            var u = new User(result[0].userId, result[0].token, result[0].refreshToken, result[0].port, result[0].scode);
+            var u = new User(result[0].userId, result[0].token, result[0].refreshToken, result[0].port, result[0].scode, result[0].client_id, result[0].client_secret);
             callback(u);
         });
     }
 
-    static insertNew(token, refreshToken, callback) {
-        var u = new User(0, token, refreshToken, 0);
+    static update(token, userId) {
+        con.query("UPDATE users SET token = '?' WHERE userId = '?'", [token, userId], function(err, result) {
+            if (err) throw err;
+        });
+    }
+
+    static insertNew(token, refreshToken, client_id, client_secret, callback) {
+        var u = new User(0, token, refreshToken, 0, client_id, client_secret);
         u.scode = User.generateScode();
         User.getNextPort(function(port) {
             u.port = port;
             //insert into db
-            dbcon.query('INSERT INTO users SET ?', { token: u.token, refreshToken: u.refreshToken, port: u.port, scode: u.scode }, function(err, result) {
+            dbcon.query('INSERT INTO users SET ?', { token: u.token, refreshToken: u.refreshToken, port: u.port, scode: u.scode, client_id: client_id, client_secret: client_secret }, function(err, result) {
                 if (err) throw err;
                 u.userId = result.insertId;
                 u.notifyWebSocket("started");
