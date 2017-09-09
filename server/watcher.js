@@ -36,29 +36,45 @@ function newWebSocket(port, message) {
             const WebSocket = require('ws');
 
             const wss = new WebSocket.Server({ port: port });
+
+            // Broadcast to all.
+            wss.broadcast = function broadcast(data) {
+                wss.clients.forEach(function each(client) {
+                    if (client.readyState === WebSocket.OPEN) {
+                        client.send(data);
+                    }
+                });
+            };
+
             wss.on('connection', function connection(ws) {
                 if (sockets.port == undefined) {
-                    sockets.port = { ws: ws, resend: [message] };
+                    sockets.port = { wss: wss, resend: [message] };
                 } else {
-                    sockets.port.ws = ws;
                     sockets.port.resend.push(message);
                 }
                 ws.on('message', function incoming(message) {
                     console.log('received on port ' + port + ': %s', message);
                 });
+
                 sockets.port.resend.forEach(function(element) {
-                    sockets.port.ws.send(message);
+                    sockets.port.wss.broadcast(message);
                 }, this);
 
             });
+
+            if (sockets.port == undefined) {
+                sockets.port = { wss: wss, resend: [message] };
+            } else {
+                sockets.port.wss = wss;
+            }
         } else {
             if (sockets.port == undefined) {
                 console.log("Websocket is undefined");
-                sockets.port = { ws: undefined, resend: [message] };
+                sockets.port = { wss: undefined, resend: [message] };
                 return;
             }
             try {
-                sockets.port.ws.send(message);
+                sockets.port.wss.broadcast(message);
             } catch (error) {
                 console.log("No clients listening on port");
                 sockets.port.resend.push(message);
