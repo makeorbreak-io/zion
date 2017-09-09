@@ -8,7 +8,7 @@ var Spotify = require('./classes/spotify.js');
 
 class Wrapper {
     //callback receives new User 
-    static receiveCallback(token, refreshToken, callback) {
+    static receiveCallback(token, refreshToken, client_id, client_secret, callback) {
         User.insertNew(token, refreshToken, callback);
     }
 
