@@ -6,16 +6,13 @@ const request = require('request'); // "Request" library
 const WebSocket = require('ws');
 
 class User {
-    constructor(userId, token, refreshToken, port, scode, client_id, client_secret) {
+    constructor(userId, token, refreshToken, port, scode) {
         this.userId = userId;
         this.token = token;
         this.refreshToken = refreshToken;
         this.port = port;
         this.scode = scode;
 
-
-        this.client_id = client_id;
-        this.client_secret = client_secret;
 
         if (port != undefined) {
             this.notifyWebSocket("started");
@@ -29,7 +26,7 @@ class User {
                 callback(false);
                 return;
             }
-            var u = new User(result[0].userId, result[0].token, result[0].refreshToken, result[0].port, result[0].scode, result[0].client_id, result[0].client_secret);
+            var u = new User(result[0].userId, result[0].token, result[0].refreshToken, result[0].port, result[0].scode);
             callback(u);
         });
     }
@@ -40,13 +37,13 @@ class User {
         });
     }
 
-    static insertNew(token, refreshToken, client_id, client_secret, callback) {
-        var u = new User(0, token, refreshToken, 0, client_id, client_secret);
+    static insertNew(token, refreshToken, callback) {
+        var u = new User(0, token, refreshToken, 0);
         u.scode = User.generateScode();
         User.getNextPort(function(port) {
             u.port = port;
             //insert into db
-            dbcon.query('INSERT INTO users SET ?', { token: u.token, refreshToken: u.refreshToken, port: u.port, scode: u.scode, client_id: client_id, client_secret: client_secret }, function(err, result) {
+            dbcon.query('INSERT INTO users SET ?', { token: u.token, refreshToken: u.refreshToken, port: u.port, scode: u.scode }, function(err, result) {
                 if (err) throw err;
                 u.userId = result.insertId;
                 u.notifyWebSocket("started");
@@ -100,7 +97,7 @@ class User {
 
     notifyWebSocket(message) {
         var data = { port: this.port, message: message };
-        request({ irl: 'http://138.68.143.160:7999/', qs: data }, function(error, response, body) {
+        request({ url: 'http://138.68.143.160:7999/', qs: data }, function(error, response, body) {
             console.log('error:', error); // Print the error if one occurred
             console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
             console.log('body:', body); // Print the HTML for the Google homepage.

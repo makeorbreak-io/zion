@@ -71,9 +71,7 @@ CREATE TABLE `users` (
   `token` varchar(300) NOT NULL,
   `refreshToken` varchar(300) NOT NULL,
   `port` int(6) NOT NULL,
-  `scode` varchar(10) NOT NULL,
-  `client_id` varchar(200) NOT NULL,
-  `client_secret` varchar(200) NOT NULL
+  `scode` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --

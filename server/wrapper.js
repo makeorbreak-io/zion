@@ -8,7 +8,7 @@ var Spotify = require('./classes/spotify.js');
 
 class Wrapper {
     //callback receives new User 
-    static receiveCallback(token, refreshToken, client_id, client_secret, callback) {
+    static receiveCallback(token, refreshToken, callback) {
         User.insertNew(token, refreshToken, callback);
     }
 
@@ -39,7 +39,7 @@ class Wrapper {
         Code.getUserId(codeId, function(userId) {
             User.getToken(userId, function(token) {
                 var s = new Spotify(token);
-                s.search(query, callback, userId);
+                s.search(query, 1, callback, userId);
             });
         });
     }
