@@ -1,6 +1,8 @@
 'use strict';
 
 var dbcon = require('./dbcon.js');
+
+const request = require('request'); // "Request" library
 const WebSocket = require('ws');
 
 class User {
@@ -85,15 +87,22 @@ class User {
         return text;
     }
 
-    notifyWebSocket(bid) {
+    notifyWebSocket(message) {
+        var data = { port: this.port, message: message };
+        request({ irl: 'http://138.68.143.160:7999/', qs: data }, function(error, response, body) {
+            console.log('error:', error); // Print the error if one occurred
+            console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+            console.log('body:', body); // Print the HTML for the Google homepage.
+        });
+
         console.log("WEBSOCKET shhould: " + message);
         this.webSocket = new WebSocket.Server({ port: this.port });
         this.webSocket.on('connection', function connection(ws) {
             ws.on('message', function incoming(message) {
                 console.log('received: %s', message);
             });
-            console.log("WEBSOCKET sending: " + JSON.stringify(bid));
-            ws.send(JSON.stringify(bid));
+            console.log("WEBSOCKET sending: " + JSON.stringify(message));
+            ws.send(JSON.stringify(message));
         });
     }
 }
