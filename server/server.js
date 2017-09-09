@@ -6,12 +6,13 @@ const querystring = require('querystring');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 
-const Wrapper = require('./wrapper.js');
+//const Wrapper = require('./wrapper.js');
 
 const router = express.Router();
 
-const CLIENT_ID = "ef3393f29a2d47eaa662d0e913abcef5";
-const CLIENT_SECRET = "05438ca3a01845f59ce0f3bafdfd1f48";
+const client_id = "ef3393f29a2d47eaa662d0e913abcef5";
+const client_secret = "05438ca3a01845f59ce0f3bafdfd1f48";
+let redirect_uri = "http://localhost:8888/callback"; //TEM QUE SE MUDAR AO DESPOIS
 
 const app = express();
 
@@ -25,6 +26,35 @@ app.use(express.static(__dirname + '/public'))
     .use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
+router.route('/login')
+  .get(function(req, res){
+    var state = generateRandomString(16);
+    res.cookie(stateKey, state);
+
+    // your application requests authorization
+    var scope = 'user-read-private user-read-email';
+    res.redirect('https://accounts.spotify.com/authorize?' +
+      querystring.stringify({
+        response_type: 'code',
+        client_id: client_id,
+        scope: scope,
+        redirect_uri: redirect_uri,
+        state: state
+      }));
+  });
+
+var stateKey = 'spotify_auth_state';
+
+var generateRandomString = function(length) {
+  var text = '';
+  var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+  for (var i = 0; i < length; i++) {
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+  }
+  return text;
+};
 
 
 /* Session-related endpoints */
@@ -43,12 +73,9 @@ router.route('/callback')
 
         let code = req.query.code;
 
-        request.get({ 'url': "http://ipecho.net/plain" }, function(error, response, body) {
-            console.log(response);
-        });
+        console.log("CODE CRL: " + req.query.code);
 
-        //TODO: Get tokens from spotify api
-        /*var authOptions = {
+        var authOptions = {
           url: 'https://accounts.spotify.com/api/token',
           form: {
             code: code,
@@ -67,30 +94,19 @@ router.route('/callback')
             var access_token = body.access_token,
                 refresh_token = body.refresh_token;
 
-            var options = {
-              url: 'https://api.spotify.com/v1/me',
-              headers: { 'Authorization': 'Bearer ' + access_token },
-              json: true
-            };
-
-            // use the access token to access the Spotify Web API
-            request.get(options, function(error, response, body) {
-              console.log(body);
+            Wrapper.receiveToken(access_token, refresh_token, function(user){
+              res.redirect('/#' +
+                querystring.stringify({
+                  sessioncode: user.scode
+                }));
             });
-
-            // we can also pass the token to the browser to make requests from there
-            res.redirect('/#' +
-              querystring.stringify({
-                access_token: access_token,
-                refresh_token: refresh_token
-              }));
           } else {
             res.redirect('/#' +
               querystring.stringify({
                 error: 'invalid_token'
               }));
           }
-        });*/
+        });
 
     });
 
@@ -107,11 +123,10 @@ router.route('/validatesession')
 
         Wrapper.validateSession(code, function(id) {
             console.log("ID:" + id);
-            sessionId = id;
 
-            if (sessionId) {
+            if (id) {
                 res.status(200);
-                res.json({ 'sessionId': sessionId, 'code': code });
+                res.json({ 'sessionId': id, 'code': code });
             } else {
                 res.status(400);
                 res.json({ 'error': 'No session found with this code', 'code': code });
@@ -128,23 +143,19 @@ router.route('/clientcode')
         }
 
         let sessId = req.query.sessId;
-        let code;
-
 
         Wrapper.generateCode(sessId, function(newCode) {
             console.log("Code " + newCode);
-            code = newCode;
+
+            if (newCode) {
+                res.status(200);
+                res.json({ 'code': newCode, 'sessId': sessId });
+            } else {
+                res.status(400);
+                res.json({ 'error': 'No session found with this sessionId', 'sessId': sessId });
+            }
+
         });
-
-        console.log("Code fora do wrapper: " + code)
-
-        if (code) {
-            res.status(200);
-            res.json({ 'code': code, 'sessId': sessId });
-        } else {
-            res.status(400);
-            res.json({ 'error': 'No session found with this sessionId', 'sessId': sessId });
-        }
     });
 
 router.route('/debt')
