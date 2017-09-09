@@ -165,17 +165,17 @@ router.route('/debt')
             res.json({ 'error': 'No code in request params' });
         }
 
-        let code = req.query.code;
+        let code = res.query.code;
 
-        Wrapper.getDebt(code, function(debt) {
-            if (!isNaN(debt)) {
-                res.status(200);
-                res.json({ 'code': code, 'debt': debt });
-            } else {
-                res.status(400);
-                res.json({ 'error': 'Error processing client\'s debt', 'code': code });
-            }
-        });
+        Wrapper.getDebt(code, function(debt){
+          if(isNumber(debt)){
+            res.status(200);
+            res.json({ 'code': code, 'debt': debt });
+          } else{
+            res.status(400);
+            res.json({ 'error': 'Error processing client\'s debt', 'code': code });
+          }
+        })
     });
 
 /* Client-related endpoints */
@@ -187,17 +187,17 @@ router.route('/validatecode')
             res.json({ 'error': 'No code in request params' });
         }
 
-        let code = req.query.code;
+        let code = res.query.code;
 
-        Wrapper.validateCode(code, function(codeId) {
-            if (codeId) {
-                res.status(200);
-                res.json({ 'codeId': codeId, 'code': code });
-            } else {
-                res.status(400);
-                res.json({ 'error': 'The code provided is unavailable', 'code': code });
-            }
-        });
+        Wrapper.validateCode(code, function(codeId){
+          if(codeId){
+            res.status(200);
+            res.json({ 'codeId': codeId, 'code': code });
+          } else{
+            res.status(400);
+            res.json({ 'error': 'The code provided is unavailable', 'code': code });
+          }
+        })
     });
 
 router.route('/search')
@@ -215,14 +215,14 @@ router.route('/search')
         let searchQuery = req.query.query;
         let id = req.query.id;
 
-        Wrapper.search(searchQuery, id, function(results) {
-            if (results) {
-                res.status(200);
-                res.json({ 'results': results, 'query': searchQuery });
-            } else {
-                res.status(400);
-                res.json({ 'error': 'There was an error searching for songs' });
-            }
+        Wrapper.search(searchQuery, id, function(results){
+          if(results){
+            res.status(200);
+            res.json({ 'results': results, 'query': searchQuery });
+          } else{
+            res.status(400);
+            res.json({ 'error': 'There was an error searching for songs'});
+          }
         })
 
         res.status(200);
@@ -247,18 +247,40 @@ router.route('/bid')
             res.json({ 'error': 'No amount in request params' });
         }
 
-        let cid = req.body.cid;
-        let sid = req.body.sid;
+        let cid = request.body.cid;
+        let sid = request.body.sid;
         let amount = req.body.amount;
 
-        Wrapper.bid(cid, sid, amount, function(result) {
-            if (result) {
-                res.status(200);
-                res.json({});
-            } else {
-                res.status(400);
-            }
+        Wrapper.bid(cid, sid, amount, function(result){
+          if(result){
+            res.status(200);
+            res.json({});
+          } else{
+            res.status(400);
+            res.json({});
+          }
         });
+    });
+
+    .get(function(req, res){
+      if (!req.query.cid) {
+          res.status(400);
+          res.json({ 'error': 'No codeId in request params' });
+      }
+
+      let cid = req.query.cid;
+
+      Wrapper.getBids(cid, function(bids){
+        if(bids){
+          res.status(200);
+          res.json({'bids': bids});
+
+        } else{
+          res.status(400);
+          res.json({'error': 'Error retireving bids for current round'});
+        }
+      })
+
     });
 
 
