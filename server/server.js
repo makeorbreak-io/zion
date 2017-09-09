@@ -205,11 +205,13 @@ router.route('/search')
         if (!req.query.query) {
             res.status(400);
             res.json({ 'error': 'No search query in request params' });
+            return;
         }
 
         if (!req.query.id) {
             res.status(400);
             res.json({ 'error': 'No codeId in request params' });
+            return;
         }
 
         let searchQuery = req.query.query;
@@ -223,10 +225,7 @@ router.route('/search')
                 res.status(400);
                 res.json({ 'error': 'There was an error searching for songs' });
             }
-        })
-
-        res.status(200);
-        res.json({ results: [] })
+        });
 
     });
 
