@@ -3,8 +3,9 @@ var mysql = require('mysql');
 var dbcon = mysql.createConnection({
     host: "localhost",
     database: "zion",
-    user: "zion",
-    password: "minda_171" //,port: 3306
+    user: "root",
+    password: "novapass_4",
+    port: 3306
 });
 
 dbcon.connect(function(err) {
