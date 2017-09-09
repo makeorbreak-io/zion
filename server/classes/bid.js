@@ -27,7 +27,7 @@ class Bid {
                         console.log("user load returned false");
                         return;
                     }
-                    u.notifyWebSocket(JSON.stringify(this));
+                    u.notifyWebSocket(JSON.stringify(b));
                     callback(b);
                 });
             });

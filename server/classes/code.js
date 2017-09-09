@@ -25,10 +25,18 @@ class Code {
         dbcon.query("SELECT codeId FROM codes WHERE code = ?", [code], function(err, result, fields) {
             if (err) throw err;
             if (result.length == 0) {
-                callback(false);
+                callback(false, false);
                 return;
             }
-            callback(result[0].codeId);
+            var codeId = result[0].codeId;
+            dbcon.query("SELECT port FROM users WHERE userId = (SELECT userId FROM codes WHERE codeId = ?)", [codeId], function(err, result, fields) {
+                if (err) throw err;
+                if (result.length == 0) {
+                    callback(false, false);
+                    return;
+                }
+                callback(codeId, result[0].port);
+            });
         });
     }
 

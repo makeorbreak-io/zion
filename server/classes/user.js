@@ -1,18 +1,19 @@
 'use strict';
 
 var dbcon = require('./dbcon.js');
+var Spotify = require('./spotify.js');
 
 const request = require('request'); // "Request" library
 const WebSocket = require('ws');
 
 class User {
-    constructor(userId, token, refreshToken, port, scode) {
+    constructor(userId, token, refreshToken, port, scode, playlist) {
         this.userId = userId;
         this.token = token;
         this.refreshToken = refreshToken;
         this.port = port;
         this.scode = scode;
-
+        this.playlist = playlist == undefined ? "" : playlist;
 
         if (port != undefined) {
             this.notifyWebSocket("started");
@@ -26,13 +27,18 @@ class User {
                 callback(false);
                 return;
             }
-            var u = new User(result[0].userId, result[0].token, result[0].refreshToken, result[0].port, result[0].scode);
+            var u = new User(result[0].userId, result[0].token, result[0].refreshToken, result[0].port, result[0].scode, result[0].playlist);
             callback(u);
         });
     }
 
     static update(token, userId) {
-        con.query("UPDATE users SET token = '?' WHERE userId = '?'", [token, userId], function(err, result) {
+        dbcon.query("UPDATE users SET token = ? WHERE userId = ?", [token, userId], function(err, result) {
+            if (err) throw err;
+        });
+    }
+    static updatePlaylist(playlist, userId) {
+        dbcon.query("UPDATE users SET playlist = ? WHERE userId = ?", [playlist, userId], function(err, result) {
             if (err) throw err;
         });
     }
@@ -43,10 +49,17 @@ class User {
         User.getNextPort(function(port) {
             u.port = port;
             //insert into db
-            dbcon.query('INSERT INTO users SET ?', { token: u.token, refreshToken: u.refreshToken, port: u.port, scode: u.scode }, function(err, result) {
+            dbcon.query('INSERT INTO users SET ?', { token: u.token, refreshToken: u.refreshToken, port: u.port, scode: u.scode, playlist: u.playlist }, function(err, result) {
                 if (err) throw err;
                 u.userId = result.insertId;
                 u.notifyWebSocket("started");
+                var s = new Spotify(u.token, u.refreshToken, u.userId);
+                s.createPlayList(function(res) {
+                    console.log("created playlist: " + res);
+                    if (res) {
+                        User.updatePlaylist(res, u.userId);
+                    }
+                });
                 callback(u);
             });
         });

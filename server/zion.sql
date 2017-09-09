@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 09, 2017 at 05:19 PM
+-- Generation Time: Sep 09, 2017 at 09:43 PM
 -- Server version: 10.1.21-MariaDB
 -- PHP Version: 7.1.1
 
@@ -33,7 +33,7 @@ CREATE TABLE `bids` (
   `songId` varchar(100) NOT NULL,
   `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `amount` double NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 
 -- --------------------------------------------------------
 
@@ -45,7 +45,7 @@ CREATE TABLE `codes` (
   `codeId` int(6) NOT NULL,
   `code` varchar(20) NOT NULL,
   `userId` int(6) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 
 -- --------------------------------------------------------
 
@@ -58,7 +58,7 @@ CREATE TABLE `rounds` (
   `userId` int(6) NOT NULL,
   `start` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `end` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00'
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 
 -- --------------------------------------------------------
 
@@ -71,8 +71,9 @@ CREATE TABLE `users` (
   `token` varchar(300) NOT NULL,
   `refreshToken` varchar(300) NOT NULL,
   `port` int(6) NOT NULL,
-  `scode` varchar(10) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  `scode` varchar(10) NOT NULL,
+  `playlist` varchar(200) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 
 --
 -- Indexes for dumped tables
@@ -112,22 +113,22 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `bids`
 --
 ALTER TABLE `bids`
-  MODIFY `bidId` int(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
+  MODIFY `bidId` int(6) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `codes`
 --
 ALTER TABLE `codes`
-  MODIFY `codeId` int(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
+  MODIFY `codeId` int(6) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `rounds`
 --
 ALTER TABLE `rounds`
-  MODIFY `roundId` int(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
+  MODIFY `roundId` int(6) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `userId` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
+  MODIFY `userId` int(5) NOT NULL AUTO_INCREMENT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
