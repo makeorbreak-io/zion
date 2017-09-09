@@ -79,13 +79,13 @@ export class ServerCommService{
     return this.http.get(this.mainUrl+searchUrl, options).map((res: Response) => res.json()).catch((error:any) => Observable.throw(error.json().error || 'Server error'));
   }
 
-  bid(cid, sid, amount){
+  bid(cid, sid, amount, name, artist){
     let bidUrl = "/bid";
 
     let headers = new Headers({ 'Content-Type': 'application/json' });
 
     let options = new RequestOptions({ headers: headers });
 
-    return this.http.post(this.mainUrl+bidUrl, JSON.stringify({'cid': cid, 'sid': sid, 'amount': amount}),options).map((res: Response) => res.json()).catch((error:any) => Observable.throw(error.json().error || 'Server error'));
+    return this.http.post(this.mainUrl+bidUrl, JSON.stringify({'cid': cid, 'sid': sid, 'amount': amount, 'title': name, 'artist': artist}),options).map((res: Response) => res.json()).catch((error:any) => Observable.throw(error.json().error || 'Server error'));
   }
 }

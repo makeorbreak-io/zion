@@ -14,8 +14,9 @@ export class HomePage {
 
   code: string;
 
-  constructor(public navCtrl: NavController, public serverComm: ServerCommService) {
-  }
+
+
+  constructor(public navCtrl: NavController, public serverComm: ServerCommService) {}
 
   newSession(){
     this.navCtrl.push(LoginPage);
