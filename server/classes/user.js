@@ -10,7 +10,9 @@ class User {
         this.refreshToken = refreshToken;
         this.port = port;
         this.scode = scode;
-        this.notifyWebSocket("started");
+        if (port != undefined) {
+            this.notifyWebSocket("started");
+        }
     }
 
     static load(userId, callback) {
@@ -34,6 +36,7 @@ class User {
             dbcon.query('INSERT INTO users SET ?', { token: u.token, refreshToken: u.refreshToken, port: u.port, scode: u.scode }, function(err, result) {
                 if (err) throw err;
                 u.userId = result.insertId;
+                u.notifyWebSocket("started");
                 callback(u);
             });
         });
@@ -83,12 +86,12 @@ class User {
     }
 
     notifyWebSocket(bid) {
+        console.log("WEBSOCKET shhould: " + message);
         this.webSocket = new WebSocket.Server({ port: this.port });
-
         this.webSocket.on('connection', function connection(ws) {
-            /*ws.on('message', function incoming(message) {
+            ws.on('message', function incoming(message) {
                 console.log('received: %s', message);
-            });*/
+            });
             console.log("WEBSOCKET sending: " + JSON.stringify(bid));
             ws.send(JSON.stringify(bid));
         });
