@@ -10,7 +10,7 @@ class User {
         this.refreshToken = refreshToken;
         this.port = port;
         this.scode = scode;
-        this.webSocket = undefined;
+        this.notifyWebSocket("started");
     }
 
     static load(userId, callback) {

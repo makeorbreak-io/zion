@@ -88,7 +88,6 @@ class Bid {
                 var bids = result.map(function(e) {
                     return new Bid(e.bidId, e.codeId, e.songId, e.amount, e.timestamp, e.roundId);
                 });
-                console.log(JSON.stringify(bids));
                 callback(bids);
             });
         });
