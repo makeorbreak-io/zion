@@ -37,14 +37,32 @@ function newWebSocket(port, message) {
 
             const wss = new WebSocket.Server({ port: port });
             wss.on('connection', function connection(ws) {
+                if (sockets.port == undefined) {
+                    sockets.port = { ws: ws, resend: [message] };
+                } else {
+                    sockets.port.ws = ws;
+                    sockets.port.resend.push(message);
+                }
                 ws.on('message', function incoming(message) {
                     console.log('received on port ' + port + ': %s', message);
                 });
-                ws.send(message);
-                sockets.port = ws;
+                sockets.port.resend.forEach(function(element) {
+                    sockets.port.ws.send(message);
+                }, this);
+
             });
         } else {
-            sockets.port.send(message);
+            if (sockets.port == undefined) {
+                console.log("Websocket is undefined");
+                sockets.port = { ws: undefined, resend: [message] };
+                return;
+            }
+            try {
+                sockets.port.ws.send(message);
+            } catch (error) {
+                console.log("No clients listening on port");
+                sockets.port.resend.push(message);
+            }
         }
     });
 }
