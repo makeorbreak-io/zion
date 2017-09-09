@@ -16,25 +16,25 @@ export class ServerCommService{
   constructor(public http: Http){};
 
   validateSessionCode(code){
-    let validateSessUrl = "/validate";
-    let reqParams = new URLSearchParams();
-    reqParams.append('sesscode', code);
+    let validateSessUrl = "/validatesession";
 
-    let options = new RequestOptions({params: reqParams});
+    let headers = new Headers({ 'Content-Type': 'application/json' });
+    let options = new RequestOptions({ headers: headers });
 
-    return this.http.get(this.mainUrl +validateSessUrl, options).map((res:Response) => res.json()).catch((error:any) => Observable.throw(error.json().error || 'Server error'));
-
+    return this.http.post(this.mainUrl+validateSessUrl, JSON.stringify({'code': code}), options).map((res:Response) => res.json()).catch((error:any) => Observable.throw(error.json().error || 'Server error'));
   }
 
-  enterSession(code){
-    let enterSessUrl = "/enter";
+  generateClientCode(sessionId){
+    let genCodeUrl = "/clientcode";
 
-    //let reqParams = new URLSearchParams();
-    //reqParams.append('code', code);
+    let headers = new Headers({ 'Content-Type': 'application/json' });
+    let params = new URLSearchParams();
+    params.append({'sessId': sessionId});
 
-    //let options = new RequestOptions({params: reqParams});
+    let options = new RequestOptions({ headers: headers });
 
-    return this.http.post(this.url+validateSessUrl, {'code': code}).map((res:Response) => res.json()).catch((error:any) => Observable.throw(error.json().error || 'Server error'));
+    return this.http.get(this.mainUrl+this.genCodeUrl, options).map((res: Response) => res.json()).catch((error:any) => Observable.throw(error.json().error || 'Server error'));
 
   }
 }
+()
