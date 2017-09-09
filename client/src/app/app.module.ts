@@ -7,6 +7,7 @@ import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
 import { LoginPage } from '../pages/login/login';
 import { SessionDashPage } from '../pages/session-dash/session-dash';
+import { BidPage } from '../pages/bid/bid';
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
@@ -18,7 +19,8 @@ import { ServerCommService } from '../services/serverComm/serverComm.service';
     MyApp,
     HomePage,
     LoginPage,
-    SessionDashPage
+    SessionDashPage,
+    BidPage
   ],
   imports: [
     BrowserModule,
@@ -30,7 +32,8 @@ import { ServerCommService } from '../services/serverComm/serverComm.service';
     MyApp,
     HomePage,
     LoginPage,
-    SessionDashPage
+    SessionDashPage,
+    BidPage
   ],
   providers: [
     ServerCommService,

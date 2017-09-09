@@ -15,9 +15,9 @@
     <p>Customer? Type in the provided code! </p>
     <ion-item>
       <ion-label>Code</ion-label>
-      <ion-input type="text"></ion-input>
+      <ion-input [(ngModel)]="code" type="text"></ion-input>
     </ion-item>
     <br>
-    <button ion-button block> Enter session </button>
+    <button ion-button block (click)="enterSession()"> Enter session </button>
 
 </ion-content>

@@ -1,0 +1,30 @@
+<!--
+  Generated template for the BidPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>bid</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+  <ion-card>
+    <strong>Code: </strong> {{code}}
+  </ion-card>
+
+  <ion-item>
+    <ion-label>Search for songs</ion-label>
+    <ion-input [(ngModel)]="searchQuery" type="text"></ion-input>
+  </ion-item>
+
+  <ion-card>
+    <strong>Current selected song: </strong> {{selectedSong}}
+  </ion-card>
+
+</ion-content>

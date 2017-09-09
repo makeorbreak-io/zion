@@ -187,7 +187,7 @@ router.route('/validatecode')
             res.json({ 'error': 'No code in request params' });
         }
 
-        let code = res.query.code;
+        let code = req.query.code;
 
         Wrapper.validateCode(code, function(codeId) {
             if (codeId) {

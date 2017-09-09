@@ -50,4 +50,18 @@ export class ServerCommService{
 
     return this.http.get(this.mainUrl+debtUrl, options).map((res: Response) => res.json()).catch((error:any) => Observable.throw(error.json().error || 'Server error'));
   }
+
+  validateCode(code){
+    let codeValUrl = "/validatecode";
+
+    let headers = new Headers({ 'Content-Type': 'application/json' });
+    let params = new URLSearchParams();
+
+    params.append('code', code);
+
+    let options = new RequestOptions({ headers: headers, search: params });
+
+    return this.http.get(this.mainUrl+codeValUrl, options).map((res: Response) => res.json()).catch((error:any) => Observable.throw(error.json().error || 'Server error'));
+
+  }
 }
