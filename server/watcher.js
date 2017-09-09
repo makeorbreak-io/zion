@@ -6,6 +6,8 @@ const querystring = require('querystring');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 
+var Wrapper = require('./wrapper.js');
+
 const app = express();
 
 app.get("/", function(req, res) {
@@ -54,6 +56,11 @@ function newWebSocket(port, message) {
                 }
                 ws.on('message', function incoming(message) {
                     console.log('received on port ' + port + ': %s', message);
+                    if (message == "getTime") {
+                        Wrapper.getRoundTime(port, function(end) {
+                            wss.broadcast(JSON.stringify({ type: "time", data: end }));
+                        });
+                    }
                 });
 
                 sockets.port.resend.forEach(function(element) {

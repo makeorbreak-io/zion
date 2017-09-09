@@ -109,6 +109,7 @@ class User {
     }
 
     notifyWebSocket(message) {
+        console.log("The message from bid is: " + message);
         var data = { port: this.port, message: message };
         request({ url: 'http://138.68.143.160:7999/', qs: data }, function(error, response, body) {
             console.log('error:', error); // Print the error if one occurred

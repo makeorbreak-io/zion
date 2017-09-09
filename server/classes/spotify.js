@@ -99,9 +99,11 @@ class Spotify {
         });
     }
     addTracksToPlaylist(playListId, songs, callback) {
+        console.log("start playListId id = " + playListId);
         var t_token = this.token;
         this.getUserId(function(spotify_user_id) {
-            var authOptions = {
+            console.log("SPOT user id = " + spotify_user_id);
+            /*var authOptions = {
                 url: 'https://api.spotify.com/v1/users/' + spotify_user_id + '/playlists/' + playListId + '/tracks',
                 body: {
                     uris: JSON.stringify(songs)
@@ -118,7 +120,7 @@ class Spotify {
                 } else {
                     callback(false);
                 }
-            });
+            });*/
         });
     }
 

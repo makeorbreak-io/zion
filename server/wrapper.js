@@ -45,8 +45,8 @@ class Wrapper {
     }
 
     //return a bid
-    static bid(codeId, songId, amount, callback) {
-        Bid.bid(codeId, songId, amount, callback);
+    static bid(codeId, songId, amount, title, artist, callback) {
+        Bid.bid(codeId, songId, amount, title, artist, callback);
     }
 
     //callback receives a list of Bids
@@ -72,6 +72,14 @@ class Wrapper {
                 var s = new Spotify(t.token, t.refreshToken);
                 s.addTracksToPlaylist(playListId, songs, callback);
             });
+        });
+    }
+
+    //callback receives timestamp for the end of the current round
+    static getRoundTime(port, callback) {
+        dbcon.query("SELECT end FROM rounds WHERE userId = (SELECT userId FROM users WHERE port = ?)) AND start < NOW() AND NOW() < end LIMIT 1", [port], function(err, result, fields) {
+            if (err) throw err;
+            callback(result[0].end);
         });
     }
 
