@@ -1,6 +1,7 @@
 'use strict';
 
 var dbcon = require('./dbcon.js');
+const WebSocket = require('ws');
 
 class User {
     constructor(userId, token, refreshToken, port, scode) {
@@ -9,16 +10,39 @@ class User {
         this.refreshToken = refreshToken;
         this.port = port;
         this.scode = scode;
+        this.webSocket = undefined;
+    }
+
+
+
+    static load(userId, callback) {
+        var u = new User(userId);
+        dbcon.query("SELECT * FROM users WHERE userId = ? LIMIT 1", [userId], function(err, result, fields) {
+            if (err) throw err;
+            if (result.length == 0) {
+                callback(false);
+                return;
+            }
+            u.userId = result[0].userId;
+            u.token = result[0].token;
+            u.refreshToken = result[0].refreshToken;
+            u.port = result[0].port;
+            u.scode = result[0].scode;
+            callback(u);
+        });
     }
 
     static insertNew(token, refreshToken, callback) {
         var u = new User(0, token, refreshToken, 0);
         u.scode = User.generateScode();
-        //insert into db
-        dbcon.query('INSERT INTO bids SET ?', { token: u.token, refreshToken: u.refreshToken, port: u.port, scode: u.scode }, function(err, result) {
-            if (err) throw err;
-            u.userId = result.insertId;
-            callback(u);
+        User.getNextPort(function(port) {
+            u.port = port;
+            //insert into db
+            dbcon.query('INSERT INTO users SET ?', { token: u.token, refreshToken: u.refreshToken, port: u.port, scode: u.scode }, function(err, result) {
+                if (err) throw err;
+                u.userId = result.insertId;
+                callback(u);
+            });
         });
     }
 
@@ -63,6 +87,18 @@ class User {
             text += possible.charAt(Math.floor(Math.random() * possible.length));
 
         return text;
+    }
+
+    getWebSocket() {
+        this.webSocket = new WebSocket.Server({ port: this.port });
+
+        this.webSocket.on('connection', function connection(ws) {
+            ws.on('message', function incoming(message) {
+                console.log('received: %s', message);
+            });
+
+            ws.send('something from the server');
+        });
     }
 }
 

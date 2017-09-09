@@ -20,6 +20,8 @@ class Bid {
             if (err) throw err;
             b.codeId = result.insertId;
             //TODO: callback for websocket
+            var u = User.load(this.tempUserId);
+
             callback(b);
         });
     }
@@ -28,6 +30,7 @@ class Bid {
     static bid(codeId, songId, amount, callback) {
         //try to get an open round
         Code.getUserId(codeId, function(userId) {
+            this.tempUserId = userId; //used when duplicate calls apply
             dbcon.query("SELECT roundId FROM rounds WHERE userID = ? AND start < NOW() AND NOW() < end LIMIT 1", [userId], function(err, result, fields) {
                 if (err) throw err;
                 var roundId;
