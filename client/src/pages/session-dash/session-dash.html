@@ -17,13 +17,15 @@
   <ion-item> <strong> Current session ID: </strong> <p>{{sessionCode}}</p></ion-item>
 
   <ion-item>
-    <ion-label>Session code</ion-label>
+    <ion-label>Client code</ion-label>
     <ion-input [(ngModel)]="lookupCode" type="text"></ion-input>
   </ion-item>
 
   <div padding>
     <button ion-button round block (click)="debtLookup()"> Get debt </button>
   </div>
+
+  <ion-item><strong>Debt amount:</strong> {{debtAmount}}</ion-item>
   <br>
   <br>
 
