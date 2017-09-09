@@ -1,5 +1,6 @@
 'use strict';
 
+var dbcon = require('./classes/dbcon.js');
 var User = require('./classes/user.js');
 var Code = require('./classes/code.js');
 var Bid = require('./classes/bid.js');
@@ -15,10 +16,10 @@ class Wrapper {
         User.validateSession(scode, callback);
     }
 
-    //callback receives codeId
+    //callback receives code
     static generateCode(userId, callback) {
         Code.generateCode(userId, function(c) {
-            callback(c.codeId);
+            callback(c.code);
         });
     }
 
@@ -53,6 +54,24 @@ class Wrapper {
     //callback receives a list of Bids
     static getBids(codeId, callback) {
         Bid.getBids(codeId, callback);
+    }
+
+    static resetDatabase(callback) {
+        var queries = [
+            "TRUNCATE table users",
+            "TRUNCATE table bids",
+            "TRUNCATE table rounds",
+            "TRUNCATE table codes",
+
+            "ALTER TABLE users AUTO_INCREMENT = 1",
+            "ALTER TABLE bids AUTO_INCREMENT = 1",
+            "ALTER TABLE rounds AUTO_INCREMENT = 1",
+            "ALTER TABLE codes AUTO_INCREMENT = 1"
+        ];
+        queries.forEach(function(element) {
+            dbcon.query(element);
+        }, this);
+        callback();
     }
 }
 
