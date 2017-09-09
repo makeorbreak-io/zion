@@ -23,14 +23,15 @@
         <a href="/login" class="btn btn-primary">Log in with Spotify</a>
       </div>
       <div id="loggedin">
-        <div id="session">
+        <div>
+          <strong>Session code: </strong> <p> check url </p>
         </div>
       </div>
     </div>
 
-    <script id="session-template" type="text/x-handlebars-template">
+    <!--<script id="session-template" type="text/x-handlebars-template">
       <p>Session code: </p><p class="clearfix">{{sessioncode}}</p>
-    </script>
+    </script>-->
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
     <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
@@ -51,9 +52,9 @@
           return hashParams;
         }
 
-        var sessionSource = document.getElementById('session-template').innerHTML,
+        /*var sessionSource = document.getElementById('session-template').innerHTML,
             sessionTemplate = Handlebars.compile(sessionSource),
-            sessionPlaceholder = document.getElementById('session');
+            sessionPlaceholder = document.getElementById('session');*/
 
         var params = getHashParams();
 
