@@ -12,7 +12,7 @@ const router = express.Router();
 
 const client_id = "ef3393f29a2d47eaa662d0e913abcef5";
 const client_secret = "05438ca3a01845f59ce0f3bafdfd1f48";
-let redirect_uri = "http://138.68.143.160:8888/callback"; //TEM QUE SE MUDAR AO DESPOIS
+let redirect_uri = "http://138.68.143.160:8888/callback";
 
 const app = express();
 
