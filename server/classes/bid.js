@@ -25,6 +25,9 @@ class Bid {
     static getDebt(codeId, callback) {
         dbcon.query("SELECT amount, roundId FROM bids WHERE codeId = ?", [codeId], function(err, result, fields) {
             if (err) throw err;
+            result.forEach(function(element) {
+
+            }, this);
         });
     }
 

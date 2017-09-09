@@ -1,3 +1,5 @@
+'use strict';
+
 var User = require('./classes/user.js');
 var Code = require('./classes/code.js');
 var Bid = require('./classes/bid.js');
