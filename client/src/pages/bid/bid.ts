@@ -33,6 +33,10 @@ export class BidPage {
   topBid: string;
   topSong: string;
 
+  intervalReg: any;
+  timeRemaining: number;
+  roundMsg: string;
+
   searchResults: SearchResult[];
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public serverComm: ServerCommService) {
@@ -41,18 +45,59 @@ export class BidPage {
     this.wsPort = this.navParams.get('port');
     this.ws = new $WebSocket(this.wsAddress + this.wsPort);
 
+    let innerScope = this;
+
+    setTimeout(function(){
+      innerScope.sendMsg("getTime");
+    }, 300);
+
     this.ws.onMessage(
     (msg: MessageEvent)=> {
         console.log("Received message: ", msg.data);
-        
-        try{
-          let jsonData = JSON.parse(msg.data);
-          if(!jsonData.bidId){
-            return;
-          }
 
-          this.topBid = jsonData.amount;
-          this.topSong = jsonData.title + "-" + jsonData.artist;
+
+        try{
+
+          let jsonData = JSON.parse(msg.data);
+          if(jsonData.type == "bid"){
+            this.topBid = jsonData.amount;
+            this.topSong = jsonData.title + " - " + jsonData.artist;
+          }
+          else if(jsonData.type == "time"){
+            console.log(jsonData.data);
+            let endTime = jsonData.data;
+            if(endTime === -1){
+              this.roundMsg = "No round defined";
+              this.topBid = null;
+              this.topSong = null;
+              this.bidAmount = 0;
+            }
+            else{
+              console.log(endTime);
+            }
+          }
+          else if(jsonData.type == "round"){
+            this.timeRemaining = parseInt(jsonData.end) - Math.round(new Date().getTime()/1000) + 3600;
+            this.roundMsg = "Time remaining this round: " + String(this.timeRemaining);
+            if(this.intervalReg){
+                clearInterval(this.intervalReg);
+            }
+            let innerScope = this;
+            this.intervalReg = setInterval(function(){
+              innerScope.timeRemaining--;
+              if(innerScope.timeRemaining < 0){
+                //Bid round ended
+                innerScope.bidAmount = 0;
+                innerScope.topBid = null;
+                innerScope.topSong = null;
+                innerScope.roundMsg ="No round defined";
+                clearInterval(innerScope.intervalReg);
+                return;
+              }
+              innerScope.roundMsg ="Time remaining this round: " +  String(innerScope.timeRemaining);
+            }, 1000)
+
+          }
         }
         catch(e){
           return;
@@ -60,11 +105,11 @@ export class BidPage {
 
     },
     {autoApply: false});
+
   }
 
-  sendMsg(){
-    console.log("AMANDEI MESMO");
-    this.ws.send("AMANDEI UMA CENA").subscribe(lol => console.log(lol));
+  sendMsg(msg){
+    this.ws.send(msg).subscribe(lol => console.log(lol));
   }
 
   search(){
