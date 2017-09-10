@@ -58,7 +58,12 @@ app.get("/", function(req, res) {
             newWebSocket(req.query.port, JSON.stringify({ type: "time", data: m.data.end }));
 
             Wrapper.getBestBid(m.data.roundId, function(bid) {
-                newWebSocket(req.query.port, JSON.stringify({ type: "bid", data: bid }));
+                Wrapper.getTrackInfo(bid.songId, bid.codeId, function(info) {
+                    bid.title = info.name;
+                    bid.artist = info.artist;
+                    bid.type = "bid";
+                    newWebSocket(req.query.port, JSON.stringify(bid));
+                });
             });
         }, duration * 100);
         //todo send frequent timestamps

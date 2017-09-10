@@ -1,4 +1,8 @@
 
+pm2 delete resetDatabase.js
+pm2 start resetDatabase.js
+pm2 delete resetDatabase.js
+clear
 pm2 delete server.js
 pm2 delete watcher.js
 sudo systemctl restart nginx
