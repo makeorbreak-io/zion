@@ -44,6 +44,18 @@ app.get("/", function(req, res) {
         setTimeout(function() {
             Wrapper.finishRound(m.data.roundId);
         }, duration * 1000);
+
+        //broadcast time
+        var timeLeft = duration;
+        var ticks = 0;
+        var interval = setInterval(function() {
+            ticks++;
+            if (ticks == 10) {
+                clearInterval(interval);
+            }
+            timeLeft -= duration * 100;
+            newWebSocket(req.query.port, JSON.stringify({ type: "time", data: timeLeft }));
+        }, duration * 100);
         //todo send frequent timestamps
         console.log("------------------------ROUND--------------" + m.data);
     }

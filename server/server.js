@@ -34,6 +34,8 @@ router.route('/login')
 
         // your application requests authorization
         var scope = 'user-read-private user-read-email playlist-modify-public playlist-modify-private user-read-playback-state user-modify-playback-state user-read-currently-playing';
+
+        'playlist-read-private playlist-read-collaborative playlist-modify-public playlist-modify-private streaming ugc-image-upload user-follow-modify user-follow-read user-library-read user-library-modify user-read-private user-read-birthdate user-read-email user-top-read user-read-playback-state user-modify-playback-state user-read-currently-playing user-read-recently-played';
         res.redirect('https://accounts.spotify.com/authorize?' +
             querystring.stringify({
                 response_type: 'code',
@@ -189,10 +191,10 @@ router.route('/validatecode')
 
         let code = req.query.code;
 
-        Wrapper.validateCode(code, function(codeId) {
+        Wrapper.validateCode(code, function(codeId, port) {
             if (codeId) {
                 res.status(200);
-                res.json({ 'codeId': codeId, 'code': code });
+                res.json({ 'codeId': codeId, 'code': code, 'port': port });
             } else {
                 res.status(400);
                 res.json({ 'error': 'The code provided is unavailable', 'code': code });
@@ -250,8 +252,10 @@ router.route('/bid')
         let cid = req.body.cid;
         let sid = req.body.sid;
         let amount = req.body.amount;
+        let title = req.body.title;
+        let artist = req.body.artist;
 
-        Wrapper.bid(cid, sid, amount, function(result) {
+        Wrapper.bid(cid, sid, amount, title, artist, function(result) {
             if (result) {
                 res.status(200);
                 res.json({});
