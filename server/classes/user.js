@@ -16,7 +16,7 @@ class User {
         this.playlist = playlist == undefined ? "" : playlist;
 
         if (port != undefined) {
-            this.notifyWebSocket("started");
+            this.notifyWebSocket(JSON.stringify({ action: "start" }));
         }
     }
 
@@ -52,7 +52,7 @@ class User {
             dbcon.query('INSERT INTO users SET ?', { token: u.token, refreshToken: u.refreshToken, port: u.port, scode: u.scode, playlist: u.playlist }, function(err, result) {
                 if (err) throw err;
                 u.userId = result.insertId;
-                u.notifyWebSocket("started");
+                u.notifyWebSocket(JSON.stringify({ action: "start" }));
                 var s = new Spotify(u.token, u.refreshToken, u.userId);
                 s.createPlayList(function(res) {
                     console.log("created playlist: " + res);
@@ -109,6 +109,7 @@ class User {
     }
 
     notifyWebSocket(message) {
+        console.log("The message from bid is: " + message);
         var data = { port: this.port, message: message };
         request({ url: 'http://138.68.143.160:7999/', qs: data }, function(error, response, body) {
             console.log('error:', error); // Print the error if one occurred

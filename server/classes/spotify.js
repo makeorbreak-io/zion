@@ -75,7 +75,7 @@ class Spotify {
             callback(this.playlistId);
             return;
         }
-        var name = "jukibify";
+        var name = "jukebify";
         this.getUserId(function(spotify_user_id) {
             var authOptions = {
                 url: 'https://api.spotify.com/v1/users/' + spotify_user_id + '/playlists',
@@ -99,26 +99,50 @@ class Spotify {
         });
     }
     addTracksToPlaylist(playListId, songs, callback) {
+        console.log("start playListId id = " + playListId);
         var t_token = this.token;
         this.getUserId(function(spotify_user_id) {
+            console.log("SPOT user id = " + spotify_user_id);
+            var url = 'https://api.spotify.com/v1/users/' + spotify_user_id + '/playlists/' + playListId + '/tracks';
+            console.log(url);
             var authOptions = {
-                url: 'https://api.spotify.com/v1/users/' + spotify_user_id + '/playlists/' + playListId + '/tracks',
-                body: {
-                    uris: JSON.stringify(songs)
-                },
+                url: url,
+                body: JSON.stringify({
+                    uris: songs
+                }),
                 headers: {
                     'Authorization': 'Bearer ' + t_token,
                     'Content-Type': 'application/json'
                 }
             };
+            console.log(JSON.stringify(authOptions));
             request.post(authOptions, function(error, response, body) {
-                console.log(response);
-                if (!error && response.statusCode === 201) {
+                console.log("body: " + body);
+                if (!error && body) {
                     callback(true); //playlistId
                 } else {
                     callback(false);
                 }
             });
+        });
+    }
+
+    disableShuffle(callback) {
+        var authOptions = {
+            url: "https://api.spotify.com/v1/me/player/shuffle",
+            qs: {
+                state: false
+            },
+            headers: {
+                'Authorization': 'Bearer ' + this.token
+            }
+        };
+        request.put(authOptions, function(error, response, body) {
+            if (!error && response.statusCode == 204) {
+                callback(true);
+            } else {
+                callback(false);
+            }
         });
     }
 
