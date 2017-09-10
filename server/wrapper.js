@@ -25,8 +25,8 @@ class Wrapper {
     }
 
     //callback receives double representing total debt in euros
-    static getDebt(codeId, callback) {
-        Bid.getDebt(codeId, callback);
+    static getDebt(code, callback) {
+        Bid.getDebt(code, callback);
     }
 
     //callback receives codeId
