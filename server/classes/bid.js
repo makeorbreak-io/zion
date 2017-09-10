@@ -46,7 +46,7 @@ class Bid {
                 var roundId;
                 if (result.length == 0) {
                     //if not, create a new round, setting the end timeout
-                    dbcon.query('INSERT INTO rounds SET userId = ?, end = CURRENT_TIMESTAMP + INTERVAL 10 SECOND', [userId], function(err, result) {
+                    dbcon.query('INSERT INTO rounds SET userId = ?, end = CURRENT_TIMESTAMP + INTERVAL 120 SECOND', [userId], function(err, result) {
                         if (err) throw err;
                         roundId = result.insertId;
                         Bid.insertNew(codeId, songId, amount, roundId, title, artist, callback); //insert bid

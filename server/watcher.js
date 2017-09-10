@@ -39,10 +39,11 @@ app.get("/", function(req, res) {
         newWebSocket(req.query.port, JSON.stringify(m.data));
 
         //set timeout for the end of the round
-        var duration = new Date().now() - new Date(Date.parse(m.data.end));
+        var duration = m.data.end - (new Date().getTime() / 1000);
+        console.log("set timeout for " + duration);
         setTimeout(function() {
             Wrapper.finishRound(m.data.roundId);
-        }, duration);
+        }, duration * 1000);
         //todo send frequent timestamps
         console.log("------------------------ROUND--------------" + m.data);
     }

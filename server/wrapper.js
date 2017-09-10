@@ -107,7 +107,7 @@ class Wrapper {
                 User.load(userId, function(u) {
                     console.log("finish-> user load->" + u.userId);
                     var s = new Spotify(u.token, u.refreshToken, u.userId);
-                    s.addTracksToPlaylist(u.playlist, songId, function(res) {
+                    s.addTracksToPlaylist(u.playlist, [songId], function(res) {
                         console.log("finish->track added: " + res);
                         if (res) {
                             s.disableShuffle(function() {
