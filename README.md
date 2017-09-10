@@ -1,6 +1,6 @@
 # zion
 
-We built a virtual jukebox called **Jukebify** on top of the Spotify API. 
+We built a virtual jukebox called **Jukebify** on top of the Spotify API - completly network-independent. 
 
 With this app a venue (for example a bar) can let the customers decide what the songs playing are while profiting from it. Jukebify works like an auction: each customer that wants to choose the next song can place a bid on the current round (~120s) and, at the end of each round, the customer that has the highest bid is the one whose song gets played, his or her bid is added to the venue tab and each venue can know what a customer owes. The venue connects its spotify account and a custom playlist is created and managed for them.
 

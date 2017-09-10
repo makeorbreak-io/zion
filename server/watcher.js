@@ -44,6 +44,28 @@ app.get("/", function(req, res) {
         setTimeout(function() {
             Wrapper.finishRound(m.data.roundId);
         }, duration * 1000);
+
+        //broadcast time
+        var timeLeft = duration * 1000;
+        var ticks = 0;
+        var interval = setInterval(function() {
+            ticks++;
+            if (ticks == 10) {
+                clearInterval(interval);
+            }
+            timeLeft -= duration * 100;
+            console.log("broadcasting time--------- " + JSON.stringify({ type: "time", data: m.data.end }));
+            newWebSocket(req.query.port, JSON.stringify({ type: "time", data: m.data.end }));
+
+            Wrapper.getBestBid(m.data.roundId, function(bid) {
+                Wrapper.getTrackInfo(bid.songId, bid.codeId, function(info) {
+                    bid.title = info.name;
+                    bid.artist = info.artist;
+                    bid.type = "bid";
+                    newWebSocket(req.query.port, JSON.stringify(bid));
+                });
+            });
+        }, duration * 100);
         //todo send frequent timestamps
         console.log("------------------------ROUND--------------" + m.data);
     }

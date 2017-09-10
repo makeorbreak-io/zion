@@ -44,6 +44,22 @@ class Wrapper {
         });
     }
 
+    //callback receives a list of songs
+    static getTrackInfo(songId, codeId, callback) {
+        console.log("getTrackInfo codeID " + codeId);
+        Code.getUserId(codeId, function(userId) {
+            User.getToken(userId, function(t) {
+                console.log("getTrackInfo token info " + t);
+                var s = new Spotify(t.token, t.refreshToken);
+                s.getTrackInfo(songId, callback);
+            });
+        });
+    }
+
+    static getBestBid(roundId, callback) {
+        Bid.getBestBid(roundId, callback);
+    };
+
     //return a bid
     static bid(codeId, songId, amount, title, artist, callback) {
         Bid.bid(codeId, songId, amount, title, artist, callback);

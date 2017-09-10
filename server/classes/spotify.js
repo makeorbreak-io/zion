@@ -14,6 +14,35 @@ class Spotify {
         this.userId = userId; //does not go into database
         this.playlistId = undefined; //does not go into database
     }
+    static getId(uri) {
+        return uri.split(":")[2];
+    }
+
+    getTrackInfo(songId, callback) {
+        var t_token = this.token;
+        console.log("getuser: " + t_token);
+        var authOptions = {
+            url: 'https://api.spotify.com/v1/tracks/' + Spotify.getId(songId),
+            headers: {
+                'Authorization': 'Bearer ' + t_token
+            }
+        };
+        request.get(authOptions, function(error, response, body) {
+            var b = JSON.parse(body);
+            console.log("TRACK DATA--------------" + body);
+            if (!error && b) {
+                var artist = "not found";
+                try {
+                    artist = b.artists[0].name;
+                } catch (error) {
+                    console.log("not found artist");
+                }
+                callback({ name: b.name, artist: artist });
+            } else {
+                callback(false);
+            }
+        });
+    }
 
     search(q, attempt, callback, userId) {
         console.log("attempt: " + attempt);
