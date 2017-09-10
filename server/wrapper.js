@@ -83,7 +83,8 @@ class Wrapper {
                 callback(-1);
                 return;
             }
-            callback(result[0].end);
+            var end = (new Date(Date.parse(result[0].end)).getTime() / 1000);
+            callback(end);
         });
     }
 
