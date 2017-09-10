@@ -77,7 +77,7 @@ export class BidPage {
             }
           }
           else if(jsonData.type == "round"){
-            this.timeRemaining = parseInt(jsonData.end) - Math.round(new Date().getTime()/1000) + 3600;
+            this.timeRemaining = parseInt(jsonData.end) - Math.round(new Date().getTime()/1000);
             this.roundMsg = "Time remaining this round: " + String(this.timeRemaining);
             if(this.intervalReg){
                 clearInterval(this.intervalReg);
