@@ -36,7 +36,19 @@
   <ion-card>
     <strong>Your selected song: </strong> <div *ngIf="selectedSong">{{selectedSong.name}} - {{selectedSong.artist}}</div>
   </ion-card>
-  <br><br><br><br><br>
+  <br><br>
+
+  <strong *ngIf="roundMsg">{{roundMsg}}</strong>
+  <ion-grid>
+    <ion-row>
+      <ion-col col-5></ion-col>
+      <ion-col col-4>
+        <ion-spinner *ngIf="spinToggle"></ion-spinner>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <br><br>
   <ion-item>
     <ion-label>Amount</ion-label>
     <ion-input [(ngModel)]="bidAmount" type="text"></ion-input>
@@ -54,7 +66,7 @@
   </ion-card>
 
 
-<button ion-button block (click)="sendMsg()"> AMANDA </button>
+<!--<button ion-button block (click)="sendMsg()"> AMANDA </button>-->
 
 
 </ion-content>
