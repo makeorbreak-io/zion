@@ -77,11 +77,11 @@ class Bid {
     }
 
     //callback receives debt
-    static getDebt(codeId, callback) {
-        dbcon.query("SELECT amount, roundId FROM bids WHERE codeId = ? ORDER BY roundId, amount DESC", [codeId], function(err, result, fields) {
+    static getDebt(code, callback) {
+        dbcon.query("SELECT amount, roundId FROM bids WHERE codeId = (SELECT codeId FROM codes WHERE code = ?) ORDER BY roundId, amount DESC", [code], function(err, result, fields) {
             if (err) throw err;
             var checkedRounds = [];
-            var debt = 0;
+            let debt = 0;
             result.forEach(function(element) {
                 if (checkedRounds.indexOf(element.roundId) == -1) {
                     debt += element.amount;
