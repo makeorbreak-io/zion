@@ -37,6 +37,19 @@ class Bid {
 
     }
 
+    static getBestBid(roundId, callback) {
+        dbcon.query("SELECT * FROM bids WHERE roundId = ? ORDER BY bidId DESC LIMIT 1", [roundId], function(err, result, fields) {
+            if (err) throw err;
+            var roundId;
+            if (result.length == 0) {
+                callback(false);
+            } else {
+                callback(new Bid(result[0].bidId, result[0].codeId, result[0].songId, result[0].amount, result[0].roundId));
+            }
+
+        });
+    }
+
     //posts a bid, 
     static bid(codeId, songId, amount, title, artist, callback) {
         //try to get an open round

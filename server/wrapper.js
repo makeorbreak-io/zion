@@ -44,6 +44,10 @@ class Wrapper {
         });
     }
 
+    static getBestBid(roundId, callback) {
+        Bid.getBestBid(roundId, callback);
+    };
+
     //return a bid
     static bid(codeId, songId, amount, title, artist, callback) {
         Bid.bid(codeId, songId, amount, title, artist, callback);
