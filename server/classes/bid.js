@@ -46,7 +46,7 @@ class Bid {
                 var roundId;
                 if (result.length == 0) {
                     //if not, create a new round, setting the end timeout
-                    dbcon.query('INSERT INTO rounds SET userId = ?, end = CURRENT_TIMESTAMP + INTERVAL 120 SECOND', [userId], function(err, result) {
+                    dbcon.query('INSERT INTO rounds SET userId = ?, end = CURRENT_TIMESTAMP + INTERVAL 10 SECOND', [userId], function(err, result) {
                         if (err) throw err;
                         roundId = result.insertId;
                         Bid.insertNew(codeId, songId, amount, roundId, title, artist, callback); //insert bid
@@ -59,7 +59,7 @@ class Bid {
                             }
                             User.load(userId, function(u) {
                                 //tell the websocket manager to take control of the time for this round
-                                var end = (new Date(Date.parse(result[0].end)).getTime() / 1000)
+                                var end = (new Date(Date.parse(result[0].end)).getTime() / 1000);
                                 u.notifyWebSocket(JSON.stringify({ action: "round", type: "round", data: { roundId: roundId, end: end } }));
                             });
                         });

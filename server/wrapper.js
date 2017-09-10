@@ -88,6 +88,45 @@ class Wrapper {
         });
     }
 
+    static finishRound(roundId) {
+        //getBest song
+        dbcon.query("SELECT songId FROM bids WHERE roundId = ? ORDER BY bidId DESC LIMIT 1", [roundId], function(err, result, fields) {
+            if (err) throw err;
+            if (result.length == 0) {
+                return;
+            }
+
+            var songId = result[0].songId;
+            console.log("finish-> query best song->" + songId);
+            dbcon.query("SELECT userId FROM rounds WHERE roundId = ? LIMIT 1", [roundId], function(err, result, fields) {
+                if (err) throw err;
+                if (result.length == 0) {
+                    return;
+                }
+                var userId = result[0].userId;
+                User.load(userId, function(u) {
+                    console.log("finish-> user load->" + u.userId);
+                    var s = new Spotify(u.token, u.refreshToken, u.userId);
+                    s.addTracksToPlaylist(u.playlist, songId, function(res) {
+                        console.log("finish->track added: " + res);
+                        if (res) {
+                            s.disableShuffle(function() {
+                                console.log("shuffle disabled");
+                            });
+                        }
+                    });
+                });
+            });
+
+        });
+        //add to playlist
+
+        //disable shuffle
+
+
+    }
+
+
     static resetDatabase(callback) {
         var queries = [
             "TRUNCATE table users",

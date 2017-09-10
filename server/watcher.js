@@ -37,6 +37,13 @@ app.get("/", function(req, res) {
     } else if (m.action == "round") {
         m.data.type = "round";
         newWebSocket(req.query.port, JSON.stringify(m.data));
+
+        //set timeout for the end of the round
+        var duration = new Date().now() - new Date(Date.parse(m.data.end));
+        setTimeout(function() {
+            Wrapper.finishRound(m.data.roundId);
+        }, duration);
+        //todo send frequent timestamps
         console.log("------------------------ROUND--------------" + m.data);
     }
 

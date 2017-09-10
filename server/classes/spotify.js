@@ -117,12 +117,32 @@ class Spotify {
             };
             console.log(JSON.stringify(authOptions));
             request.post(authOptions, function(error, response, body) {
-                if (!error && response.statusCode === 201) {
+                console.log("body: " + body);
+                if (!error && body) {
                     callback(true); //playlistId
                 } else {
                     callback(false);
                 }
             });
+        });
+    }
+
+    disableShuffle(callback) {
+        var authOptions = {
+            url: "https://api.spotify.com/v1/me/player/shuffle",
+            qs: {
+                state: false
+            },
+            headers: {
+                'Authorization': 'Bearer ' + this.token
+            }
+        };
+        request.put(authOptions, function(error, response, body) {
+            if (!error && response.statusCode == 204) {
+                callback(true);
+            } else {
+                callback(false);
+            }
         });
     }
 
