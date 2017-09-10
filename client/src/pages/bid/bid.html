@@ -36,17 +36,6 @@
   <ion-card>
     <strong>Your selected song: </strong> <div *ngIf="selectedSong">{{selectedSong.name}} - {{selectedSong.artist}}</div>
   </ion-card>
-  <br><br>
-
-  <strong *ngIf="roundMsg">{{roundMsg}}</strong>
-  <ion-grid>
-    <ion-row>
-      <ion-col col-5></ion-col>
-      <ion-col col-4>
-        <ion-spinner *ngIf="spinToggle"></ion-spinner>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
 
   <br><br>
   <ion-item>
@@ -58,7 +47,16 @@
     <button ion-button round block (click)="makeBid()"> Make a bid </button>
   </div>
 
-  <br><br><br><br><br>
+
+  <br><br><br>
+  <ion-grid>
+    <ion-row>
+      <ion-col col-3></ion-col>
+      <ion-col col-9>
+        <h4 *ngIf="roundMsg">{{roundMsg}}</h4>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
   <ion-card>
     <strong>Top bid: </strong> {{topBid}}
     <br>

@@ -73,12 +73,31 @@ export class BidPage {
               this.bidAmount = 0;
             }
             else{
-              console.log(endTime);
-            }
+              this.timeRemaining =parseInt(jsonData.data) - Math.round(new Date().getTime()/1000);
+              this.roundMsg = "End of round: " + String(this.timeRemaining);
+              if(this.intervalReg){
+                  clearInterval(this.intervalReg);
+              }
+              let innerScope = this;
+              this.intervalReg = setInterval(function(){
+                innerScope.timeRemaining--;
+                if(innerScope.timeRemaining < 0){
+                  //Bid round ended
+                  innerScope.bidAmount = 0;
+                  innerScope.topBid = null;
+                  innerScope.topSong = null;
+                  innerScope.roundMsg ="No round defined";
+                  clearInterval(innerScope.intervalReg);
+                  return;
+                }
+                innerScope.roundMsg ="End of round: " +  String(innerScope.timeRemaining);
+              }, 1000);
+
           }
+        }
           else if(jsonData.type == "round"){
             this.timeRemaining = parseInt(jsonData.end) - Math.round(new Date().getTime()/1000);
-            this.roundMsg = "Time remaining this round: " + String(this.timeRemaining);
+            this.roundMsg = "End of round: " + String(this.timeRemaining);
             if(this.intervalReg){
                 clearInterval(this.intervalReg);
             }
@@ -94,7 +113,7 @@ export class BidPage {
                 clearInterval(innerScope.intervalReg);
                 return;
               }
-              innerScope.roundMsg ="Time remaining this round: " +  String(innerScope.timeRemaining);
+              innerScope.roundMsg ="End of round: " +  String(innerScope.timeRemaining);
             }, 1000)
 
           }

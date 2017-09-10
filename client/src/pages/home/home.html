@@ -8,8 +8,13 @@
 
     <p>Planning an event? Start a new session!</p>
 
+    <ion-item>
+      <ion-label>Session code</ion-label>
+      <ion-input [(ngModel)]="sessCode" type="text"></ion-input>
+    </ion-item>
+
     <div padding>
-        <button ion-button block (click)="newSession()"> New Session </button>
+      <button ion-button round block (click)="validateSession()"> New session </button>
     </div>
 
     <p>Customer? Type in the provided code! </p>
@@ -18,6 +23,6 @@
       <ion-input [(ngModel)]="code" type="text"></ion-input>
     </ion-item>
     <br>
-    <button ion-button block (click)="enterSession()"> Enter session </button>
+    <button ion-button block round (click)="enterSession()"> Enter session </button>
 
 </ion-content>
