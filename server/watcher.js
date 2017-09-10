@@ -54,8 +54,8 @@ app.get("/", function(req, res) {
                 clearInterval(interval);
             }
             timeLeft -= duration * 100;
-            console.log("broadcasting time--------- " + JSON.stringify({ type: "time", data: timeLeft }));
-            newWebSocket(req.query.port, JSON.stringify({ type: "time", data: timeLeft }));
+            console.log("broadcasting time--------- " + JSON.stringify({ type: "time", data: m.data.end }));
+            newWebSocket(req.query.port, JSON.stringify({ type: "time", data: m.data.end }));
         }, duration * 100);
         //todo send frequent timestamps
         console.log("------------------------ROUND--------------" + m.data);
